@@ -1,0 +1,41 @@
+{
+  "description": "撸铁不求人",
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "miniprogramRoot": "./",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "useCompilerPlugins": [
+      "typescript"
+    ]
+  },
+  "packOptions": {
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "docs"
+      },
+      {
+        "type": "file",
+        "value": "pnpm-lock.yaml"
+      },
+      {
+        "type": "file",
+        "value": "tsconfig.json"
+      },
+      {
+        "type": "file",
+        "value": "package.json"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": "LICENSE"
+      }
+    ]
+  }
+}

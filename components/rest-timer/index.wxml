@@ -1,0 +1,1 @@
+<view class="title">组间休息</view><view class="number">{{left}} 秒</view><button wx:if="{{!game}}" bindtap="play">玩点圆点</button><view wx:else class="row"><button style="margin-left:{{points%4*12}}%;width:100rpx;border-radius:50%" bindtap="tap">●</button>命中 {{points}} 次</view><button bindtap="finish">提前结束休息</button>
