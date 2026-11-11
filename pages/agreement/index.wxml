@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="title">服务协议</view>
+  <view class="sub">开始使用即表示你已阅读并同意以下条款。</view>
+
+  <view wx:for="{{ blocks }}" wx:key="title" class="block">
+    <view class="block-title">{{ item.title }}</view>
+    <view wx:for="{{ item.lines }}" wx:for-item="line" wx:key="*this" class="block-line">
+      {{ line }}
+    </view>
+  </view>
+
+  <view class="foot">更新日期：{{ updated }}</view>
+</view>

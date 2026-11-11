@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="title">反馈</view>
+  <view class="sub">遇到问题，或者想让我们补什么内容，都可以写在这里。</view>
+
+  <block wx:if="{{ !sent }}">
+    <view class="box">
+      <textarea
+        class="note"
+        maxlength="1000"
+        placeholder="例如：腿举机的座椅怎么调写得不够清楚"
+        placeholder-class="ph"
+        bindinput="input"
+      />
+      <view class="count {{ count > 900 ? 'warn' : '' }}">{{ count }} / 1000</view>
+    </view>
+    <button class="primary" bindtap="submit" loading="{{ sending }}">提交反馈</button>
+  </block>
+
+  <block wx:else>
+    <view class="done">
+      <view class="done-title">已经收到</view>
+      <view class="muted">我们会逐条看。需要回复的话，会用你当前的微信联系你。</view>
+    </view>
+    <button class="ghost" bindtap="back">返回</button>
+  </block>
+</view>

@@ -1,0 +1,215 @@
+/* 动作库：白底黑色系。顶部搜索与分类固定，下面左右两块各自独立滚动。 */
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* 顶部：搜索 + 器材分类，固定不随列表滚动 */
+.top {
+  flex: none;
+  padding: 8rpx 24rpx 0;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  background: #f4f4f2;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+}
+.search-icon {
+  color: #a8a8a4;
+  font-size: 32rpx;
+  line-height: 1;
+}
+.search-input {
+  flex: 1;
+  padding: 22rpx 0;
+  background: transparent;
+  font-size: 28rpx;
+}
+.search-ph {
+  color: #a8a8a4;
+}
+
+.chips {
+  margin-top: 8rpx;
+  white-space: nowrap;
+}
+/* 固定高度 + flex 居中：不靠 line-height 估算，字始终在中间 */
+.chips .chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 58rpx;
+  margin: 8rpx 12rpx 8rpx 0;
+  padding: 0 26rpx;
+  border: 1rpx solid #e0e0dd;
+  border-radius: 999rpx;
+  color: #666;
+  font-size: 26rpx;
+  line-height: 1;
+  vertical-align: middle;
+}
+.chips .chip.on {
+  background: #191919;
+  border-color: #191919;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 左右两块：高度由 JS 按视口减去顶部算，各自滚动 */
+.body {
+  display: flex;
+  min-height: 0;
+}
+.side {
+  flex: none;
+  width: 168rpx;
+  height: 100%;
+  padding: 8rpx 0 40rpx;
+  box-sizing: border-box;
+  background: #fafaf8;
+  border-right: 1rpx solid #f0efed;
+}
+/* 器材库左侧是器材名，比部位长，单独放宽 */
+.side.wide {
+  width: 220rpx;
+}
+.side-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  margin: 0;
+  padding: 24rpx 16rpx 24rpx 26rpx;
+  color: #777;
+  font-size: 27rpx;
+  line-height: 1.3;
+}
+/* 细分是第二层，行高和字号都收一档，避免跟一级部位一样厚。
+   注意类名别叫 sub：app.wxss 里的全局 .sub 带 margin-bottom: 44rpx。 */
+.side-item.child {
+  margin: 0;
+  padding: 18rpx 16rpx 18rpx 40rpx;
+  color: #9a9a96;
+  font-size: 24rpx;
+  line-height: 1.3;
+}
+.side-item.on {
+  background: #fff;
+  color: #191919;
+  font-weight: 600;
+}
+.side-item.on::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6rpx;
+  height: 28rpx;
+  margin-top: -14rpx;
+  border-radius: 0 6rpx 6rpx 0;
+  background: #191919;
+}
+.side-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 收起时箭头朝下，展开后转 180 度。
+   用两条描边拼出来的箭头，不用「⌄」字符——字符的基线在 text 里压不住，看着会偏下 */
+.caret {
+  flex: none;
+  width: 9rpx;
+  height: 9rpx;
+  border-right: 2rpx solid #b0b0ac;
+  border-bottom: 2rpx solid #b0b0ac;
+  transform: rotate(45deg);
+  transition: transform 0.15s;
+}
+.caret.up {
+  transform: rotate(-135deg);
+}
+
+.main {
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+}
+.list {
+  padding: 8rpx 24rpx 40rpx 20rpx;
+}
+
+/* 右侧动作卡片 */
+.ex-card {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-top: 18rpx;
+  padding: 20rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  background: #fff;
+}
+.ex-thumb {
+  flex: none;
+  width: 140rpx;
+  height: 112rpx;
+  border-radius: 14rpx;
+  background: #f6f6f4;
+}
+.ex-thumb.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0b0ac;
+  font-size: 24rpx;
+}
+.ex-body {
+  flex: 1;
+  min-width: 0;
+}
+.ex-name {
+  color: #191919;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.ex-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 12rpx;
+}
+.ex-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 36rpx;
+  padding: 0 14rpx;
+  border-radius: 8rpx;
+  background: #f4f4f2;
+  color: #333;
+  font-size: 22rpx;
+  line-height: 1;
+}
+.ex-tag.weak {
+  color: #8c8c88;
+}
+.ex-chev {
+  flex: none;
+  color: #c8c8c4;
+  font-size: 32rpx;
+  line-height: 1;
+}
+.empty {
+  padding: 60rpx 4rpx;
+  color: #aaa;
+  font-size: 26rpx;
+  text-align: center;
+}

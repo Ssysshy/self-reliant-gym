@@ -1,0 +1,17 @@
+<view class="page" wx:if="{{ ready }}">
+  <view class="title">{{ focus }}</view>
+  <view class="sub">
+    {{ time }} · 完成 {{ done }} / {{ total }} 组{{ weights ? " · " + weights : "" }}
+  </view>
+
+  <view wx:for="{{ items }}" wx:key="name" class="item">
+    <view class="item-head">
+      <text class="item-name">{{ item.name }}</text>
+      <text class="item-target">目标 {{ item.target }}</text>
+    </view>
+    <view class="item-actual {{ item.missing ? 'miss' : '' }}">{{ item.actual }}</view>
+  </view>
+</view>
+<view class="page" wx:elif="{{ failed }}">
+  <view class="hint">这条记录读不到了，可能已经被清理。</view>
+</view>

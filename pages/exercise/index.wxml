@@ -1,0 +1,34 @@
+<view class="page" wx:if="{{ item }}">
+  <view class="head">
+    <image
+      wx:if="{{ item.ImageURL }}"
+      class="head-image"
+      mode="widthFix"
+      src="{{ item.ImageURL }}"
+    />
+    <view wx:else class="head-placeholder">{{ item.Muscle }}</view>
+    <view class="head-name">{{ item.Name }}</view>
+    <view class="head-tags">
+      <view wx:if="{{ item.SubMuscle }}" class="tag dark">{{ item.SubMuscle }}</view>
+      <view class="tag">{{ item.Category }}</view>
+      <view class="tag">{{ item.Equipment }}</view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-label">器材调节</view>
+    <view class="block-text">{{ item.Setup }}</view>
+  </view>
+  <view class="block">
+    <view class="block-label">动作步骤</view>
+    <view class="block-text">{{ item.Guide }}</view>
+  </view>
+  <view wx:if="{{ item.AuxMuscles }}" class="block">
+    <view class="block-label">辅助肌群</view>
+    <view class="block-text">{{ item.AuxMuscles }}</view>
+  </view>
+  <view wx:if="{{ item.Mistakes }}" class="block">
+    <view class="block-label">常见错误</view>
+    <view class="block-text">{{ item.Mistakes }}</view>
+  </view>
+</view>

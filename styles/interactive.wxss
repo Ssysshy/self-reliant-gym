@@ -1,0 +1,63 @@
+/**
+ * 交互控件样式片段：主按钮、次要按钮、文字操作、分段选择与 chip。
+ * 被 pages/home、pages/plans、pages/workout、pages/orders 通过 @import 引入。
+ */
+.primary {
+  background: #171717;
+  color: white;
+}
+.ghost {
+  background: #fff;
+  color: #191919;
+  border: 2rpx solid #e4e4e1;
+}
+.link {
+  text-align: center;
+  color: #888;
+  font-size: 26rpx;
+  padding: 24rpx 0;
+}
+
+/* chip 用 flex 居中而不是靠 line-height 估算，文字始终在按钮中间 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  padding: 12rpx 20rpx;
+  border-radius: 40rpx;
+  margin: 8rpx;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+.on {
+  background: #191919;
+  color: white;
+}
+
+/* 分段选择：等宽排列，单/多选共用；包一层 .wrap 可换行成标签墙 */
+.seg {
+  display: flex;
+  gap: 12rpx;
+}
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 16rpx;
+  background: #f4f4f2;
+  color: #666;
+  font-size: 26rpx;
+}
+.seg-item.on {
+  background: #191919;
+  color: #fff;
+  font-weight: 600;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+.wrap .seg-item {
+  flex: 0 0 auto;
+  padding: 16rpx 26rpx;
+}

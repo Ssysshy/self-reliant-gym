@@ -1,1 +1,83 @@
-<view class="page"><view class="title">{{title}}</view><input placeholder="搜索动作、器材或肌群" bindinput="search"/><view wx:if="{{title==='器材库'}}"><view wx:for="{{equipment}}" wx:key="*this" class="card" data-name="{{item}}" bindtap="equipment">{{item}} ›</view></view><block wx:else><view wx:if="{{equipmentName}}" class="panel"><view class="label">{{equipmentName}}</view><view class="row">{{setup}}</view>可练动作</view><view wx:for="{{rows}}" wx:key="ID" class="card" data-i="{{index}}" bindtap="open"><view class="grow">{{item.Name}}</view><text class="muted">{{item.Muscle}} ›</text></view></block><view wx:if="{{detail}}" class="panel"><view class="label">{{detail.Name}}</view><view class="row">{{detail.Muscle}} · {{detail.Equipment}}</view><image wx:if="{{detail.ImageURL}}" mode="widthFix" style="width:100%" src="{{detail.ImageURL}}"/><view wx:if="{{detail.AuxMuscles}}" class="muted">辅助肌群 · {{detail.AuxMuscles}}</view><view>{{detail.Setup}}</view><view class="row">{{detail.Guide}}</view><view wx:if="{{detail.Mistakes}}" class="muted">常见错误 · {{detail.Mistakes}}</view></view></view>
+<view class="screen">
+  <view class="top">
+    <view class="search">
+      <text class="search-icon">⌕</text>
+      <input
+        class="search-input"
+        placeholder="搜索动作名称"
+        placeholder-class="search-ph"
+        value="{{ query }}"
+        bindinput="search"
+      />
+    </view>
+    <scroll-view
+      wx:if="{{ mode === 'exercise' }}"
+      class="chips"
+      scroll-x
+      show-scrollbar="{{ false }}"
+    >
+      <!-- 用 view 不用 text：text 会把标签内的换行当换行符，每个 chip 顶部多出一个空行，字就被顶下去了 -->
+      <view
+        wx:for="{{ cats }}"
+        wx:key="*this"
+        class="chip {{ cat === item ? 'on' : '' }}"
+        data-v="{{ item }}"
+        bindtap="pickCategory"
+      >
+        {{ item }}
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 顶部固定；下面左右各自独立滚动 -->
+  <view class="body" style="height: {{ bodyHeight }}px">
+    <scroll-view
+      class="side {{ mode === 'gear' ? 'wide' : '' }}"
+      scroll-y
+      show-scrollbar="{{ false }}"
+    >
+      <block wx:for="{{ nav }}" wx:key="key">
+        <view
+          wx:if="{{ !item.hidden }}"
+          class="side-item {{ sel === item.key ? 'on' : '' }} {{ item.depth ? 'child' : '' }}"
+          data-key="{{ item.key }}"
+          bindtap="pickPart"
+        >
+          <view class="side-name">{{ item.name }}</view>
+          <view wx:if="{{ item.group }}" class="caret {{ item.open ? 'up' : '' }}"></view>
+        </view>
+      </block>
+    </scroll-view>
+
+    <scroll-view class="main" scroll-y scroll-top="{{ scrollTop }}" show-scrollbar="{{ false }}">
+      <view class="list">
+        <view
+          wx:for="{{ rows }}"
+          wx:key="ID"
+          class="ex-card"
+          data-id="{{ item.ID }}"
+          bindtap="open"
+        >
+          <image
+            wx:if="{{ item.ImageURL }}"
+            class="ex-thumb"
+            src="{{ item.ImageURL }}"
+            mode="aspectFit"
+          />
+          <view wx:else class="ex-thumb placeholder">{{ item.Muscle }}</view>
+          <view class="ex-body">
+            <view class="ex-name">{{ item.Name }}</view>
+            <view class="ex-tags">
+              <view wx:if="{{ item.SubMuscle }}" class="ex-tag">{{ item.SubMuscle }}</view>
+              <view class="ex-tag weak">{{ item.Category }}</view>
+            </view>
+          </view>
+          <text class="ex-chev">›</text>
+        </view>
+        <view wx:if="{{ !rows.length }}" class="empty">
+          {{ query ? "没有匹配的动作，换个词试试。" : "这个分类下还没有动作。" }}
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

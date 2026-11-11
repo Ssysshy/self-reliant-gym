@@ -1,0 +1,28 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "lf",
+  "plugins": ["@tofrankie/prettier-plugin-wxml"],
+  "overrides": [
+    {
+      "files": "*.wxml",
+      "options": {
+        "parser": "wxml",
+        "htmlWhitespaceSensitivity": "ignore"
+      }
+    },
+    {
+      "files": "*.wxss",
+      "options": {
+        "parser": "css"
+      }
+    },
+    {
+      "files": "*.wxs",
+      "options": {
+        "parser": "babel"
+      }
+    }
+  ]
+}

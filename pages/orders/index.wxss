@@ -1,0 +1,59 @@
+@import "../../styles/interactive.wxss";
+@import "../../styles/form.wxss";
+
+button {
+  box-sizing: border-box;
+  width: 100%;
+}
+button::after {
+  border: none;
+}
+
+.order {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.order-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.order-days {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  font-size: 22rpx;
+  line-height: 1;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+}
+.status.wait {
+  background: #f7efe4;
+  color: #9a6b2f;
+}
+.status.paid {
+  background: #191919;
+  color: #fff;
+}
+.status.off {
+  background: #f4f4f2;
+  color: #999;
+}
+.order-price {
+  font-size: 42rpx;
+  font-weight: 700;
+  margin: 16rpx 0 6rpx;
+}
+.order-meta {
+  color: #999;
+  font-size: 24rpx;
+}
+.order button {
+  margin-top: 22rpx;
+}

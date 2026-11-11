@@ -1,0 +1,40 @@
+@import "../../styles/card.wxss";
+@import "../../styles/interactive.wxss";
+
+/* 首页：三个入口卡片里的图标与箭头 */
+.icon {
+  width: 58rpx;
+  text-align: center;
+  font-size: 42rpx;
+}
+.arrow {
+  color: #aaa;
+}
+
+/* 首页：底部「记录与账户」入口 */
+.foot {
+  text-align: center;
+  color: #888;
+  font-size: 25rpx;
+  margin-top: 62rpx;
+}
+
+/* 首页：新手引导弹层 */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: #0005;
+  display: flex;
+  align-items: center;
+  padding: 50rpx;
+  z-index: 5;
+}
+.sheet {
+  width: 100%;
+  background: #fff;
+  padding: 36rpx;
+  border-radius: 28rpx;
+  max-height: 80vh;
+  overflow: auto;
+  box-sizing: border-box;
+}

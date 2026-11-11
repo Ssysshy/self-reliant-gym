@@ -1,6 +1,17 @@
 const { request, login, report } = require("../../api");
+
+// 首页入口。器材库暂时下架，恢复时把对应项的 on 改回 true 即可。
+// 页面本身不用动：pages/library 是靠 kind 参数区分动作库/器材库的。
+const HOME_ENTRIES = [
+  { label: "动作库", icon: "◎", desc: "了解动作与目标肌群", on: true },
+  { label: "器材库", icon: "◇", desc: "找到器材的使用方法", on: false },
+  { label: "训练计划", icon: "▤", desc: "安排每周的训练", on: true },
+  { label: "记录与账户", icon: "◍", desc: "回看记录与会员", on: true },
+];
+
 Page({
   data: {
+    entries: HOME_ENTRIES.filter((e) => e.on),
     stage: "",
     experience: "",
     templates: [],

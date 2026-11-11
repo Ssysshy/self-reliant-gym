@@ -1,1 +1,47 @@
-page{background:#fff;color:#191919;font-family:sans-serif}.page{padding:48rpx 54rpx 100rpx}.title{font-size:54rpx;font-weight:700;margin:32rpx 0 14rpx}.sub,.muted{color:#777;font-size:26rpx;line-height:1.6}.sub{margin-bottom:44rpx}.card,.panel{border:2rpx solid #e4e4e1;border-radius:24rpx;padding:28rpx;margin:16rpx 0;background:#fff}.card{display:flex;align-items:center;gap:22rpx}.label{font-weight:600;font-size:32rpx}.grow{flex:1}.icon{width:58rpx;text-align:center;font-size:42rpx}.arrow{color:#aaa}.foot{text-align:center;color:#888;font-size:25rpx;margin-top:62rpx}.primary,button{border-radius:18rpx;font-size:28rpx;margin:18rpx 0;padding:12rpx}.primary{background:#171717;color:white}.mask{position:fixed;inset:0;background:#0005;display:flex;align-items:center;padding:50rpx;z-index:5}.sheet{width:100%;background:#fff;padding:36rpx;border-radius:28rpx;max-height:80vh;overflow:auto;box-sizing:border-box}.chip{display:inline-block;border:1px solid #ccc;padding:12rpx 20rpx;border-radius:40rpx;margin:8rpx}.on{background:#191919;color:white}.row{margin:20rpx 0}.number{font-size:100rpx;font-weight:700}input{padding:16rpx;background:#f4f4f2;border-radius:12rpx}
+/**
+ * 全局基座样式：只放所有页面与组件共享的排版原子与表单元素。
+ * 页面/组件专属样式见 pages/页面名/index.wxss 与 components/组件名/index.wxss，
+ * 跨页复用的样式片段见 styles/。
+ */
+page {
+  background: #fff;
+  color: #191919;
+  font-family: sans-serif;
+}
+
+/* 页面容器：五个页面统一的内边距 */
+.page {
+  padding: 48rpx 54rpx 100rpx;
+}
+
+/* 排版原子 */
+.title {
+  font-size: 54rpx;
+  font-weight: 700;
+  margin: 32rpx 0 14rpx;
+}
+.sub,
+.muted {
+  color: #777;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+.sub {
+  margin-bottom: 44rpx;
+}
+.row {
+  margin: 20rpx 0;
+}
+
+/* 表单元素：小程序原生控件无法用 class 精确覆盖时按标签统一 */
+input {
+  padding: 16rpx;
+  background: #f4f4f2;
+  border-radius: 12rpx;
+}
+button {
+  border-radius: 18rpx;
+  font-size: 28rpx;
+  margin: 18rpx 0;
+  padding: 12rpx;
+}

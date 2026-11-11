@@ -1,1 +1,15 @@
-{"name":"self-reliant-gym","private":true,"devDependencies":{"miniprogram-api-typings":"^4.1.0","typescript":"^5.6.3"}}
+{
+  "name": "self-reliant-gym",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"**/*.{wxml,wxss,json}\" && prettier --write \"**/*.{wxml,wxss,json}\"",
+    "format:check": "prettier --check \"**/*.{wxml,wxss,json}\"",
+    "format:wxml": "prettier --write \"**/*.wxml\""
+  },
+  "devDependencies": {
+    "@tofrankie/prettier-plugin-wxml": "^0.1.0",
+    "miniprogram-api-typings": "^4.1.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.6.3"
+  }
+}

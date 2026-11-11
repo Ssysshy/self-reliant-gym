@@ -1,0 +1,60 @@
+/* 动作详情：白底 + 分组说明，配色与动作库卡片一致（灰底标签、黑色标题） */
+.head {
+  padding: 8rpx 0 30rpx;
+  border-bottom: 1rpx solid #f0f0ee;
+}
+.head-image {
+  width: 100%;
+  border-radius: 20rpx;
+}
+.head-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 320rpx;
+  border-radius: 20rpx;
+  background: #f6f6f4;
+  color: #b0b0ac;
+  font-size: 30rpx;
+}
+.head-name {
+  margin-top: 26rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.head-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 40rpx;
+  padding: 0 16rpx;
+  border-radius: 10rpx;
+  background: #f4f4f2;
+  color: #8c8c88;
+  font-size: 23rpx;
+  line-height: 1;
+}
+.tag.dark {
+  color: #333;
+  font-weight: 600;
+}
+
+.block {
+  margin-top: 30rpx;
+}
+.block-label {
+  color: #999;
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+}
+.block-text {
+  color: #333;
+  font-size: 29rpx;
+  line-height: 1.75;
+}

@@ -1,18 +1,35 @@
-# Build and Release Folders
+# ---- 依赖 ----
+node_modules/
+.pnpm-store/
+
+# 微信开发者工具「构建 npm」产物，可由 node_modules 重新生成
+miniprogram_npm/
+
+# 包管理器：本项目统一使用 pnpm，忽略 npm/yarn 的锁文件
+package-lock.json
+yarn.lock
+
+# ---- 微信开发者工具 ----
+# 个人本地配置（编译模式、自定义条件等），不应共享
+project.private.config.json
+
+# ---- 构建 / 上传产物 ----
+dist/
 bin-debug/
 bin-release/
-[Oo]bj/
-[Bb]in/
 
-# Other files and folders
-.settings/
+# ---- 系统与编辑器 ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# ---- 日志与临时文件 ----
+*.log
+npm-debug.log*
+pnpm-debug.log*
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# ---- 本地 AI 助手工作目录 ----
+.workbuddy/

@@ -1,0 +1,27 @@
+@import "../../styles/card.wxss";
+@import "../../styles/form.wxss";
+
+/* 一条训练记录：部位 + 时间 + 完成组数，点进去看每组实际次数 */
+.record {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.record-focus {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.record-time {
+  color: #999;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+.record-done {
+  color: #666;
+  font-size: 26rpx;
+}

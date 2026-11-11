@@ -1,0 +1,24 @@
+@import "../../styles/form.wxss";
+
+.block {
+  margin: 34rpx 0;
+}
+.block-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+.block-line {
+  position: relative;
+  padding-left: 24rpx;
+  color: #555;
+  font-size: 27rpx;
+  line-height: 1.8;
+  margin-bottom: 6rpx;
+}
+.block-line::before {
+  content: "·";
+  position: absolute;
+  left: 4rpx;
+  color: #b0b0ac;
+}

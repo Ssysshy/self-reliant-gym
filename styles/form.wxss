@@ -1,0 +1,92 @@
+/**
+ * 表单与信息块样式片段：分区标题、输入框、数字计数器、进度条。
+ * 被 pages/plans、pages/workout、pages/session 通过 @import 引入。
+ */
+.section {
+  margin: 30rpx 0 38rpx;
+}
+.section-title {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 14rpx;
+}
+.section-note {
+  font-size: 24rpx;
+  color: #b0b0ac;
+  margin-left: 10rpx;
+}
+
+/* 输入框：覆盖 app.wxss 里的 input 基线，做成整行可填的浅色块 */
+.field {
+  box-sizing: border-box;
+  width: 100%;
+  height: 92rpx;
+  background: #f4f4f2;
+  border-radius: 16rpx;
+  padding: 0 26rpx;
+  font-size: 30rpx;
+}
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+.field-row .field {
+  flex: 1;
+  width: auto;
+}
+.field-unit {
+  color: #999;
+  font-size: 26rpx;
+}
+
+.hint {
+  color: #aaa;
+  font-size: 25rpx;
+  padding: 18rpx 4rpx;
+}
+
+/* 数字计数器：训练执行页一屏只填一个数，所以要够大够好按 */
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background: #f4f4f2;
+  border-radius: 22rpx;
+  padding: 12rpx;
+}
+.counter-btn {
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 16rpx;
+  font-size: 40rpx;
+  color: #191919;
+}
+.counter-input {
+  flex: 1;
+  text-align: center;
+  font-size: 54rpx;
+  font-weight: 700;
+  background: transparent;
+  padding: 0;
+  height: 100rpx;
+  min-height: 100rpx;
+}
+
+/* 进度条 */
+.bar {
+  height: 10rpx;
+  background: #f0f0ee;
+  border-radius: 999rpx;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: #191919;
+  border-radius: 999rpx;
+  transition: width 0.3s;
+}

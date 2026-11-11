@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="title">我的订单</view>
+  <view class="sub">支付后状态没变，可以在订单上点一次「查询到账状态」。</view>
+
+  <view wx:if="{{ !ready }}" class="hint">正在读取订单…</view>
+  <view wx:elif="{{ !orders.length }}" class="hint">还没有订单。</view>
+
+  <view wx:for="{{ orders }}" wx:key="ID" class="order">
+    <view class="order-head">
+      <text class="order-days">{{ item.Days }} 天会员</text>
+      <view
+        class="status {{ item.Status === '待支付' ? 'wait' : item.Status === '已支付' ? 'paid' : 'off' }}"
+      >
+        {{ item.Status }}
+      </view>
+    </view>
+    <view class="order-price">¥{{ item.yuan }}</view>
+    <view class="order-meta">{{ item.time }} · 单号 {{ item.ID }}</view>
+    <button
+      wx:if="{{ item.Status === '待支付' }}"
+      class="ghost"
+      data-id="{{ item.ID }}"
+      loading="{{ busy === item.ID }}"
+      bindtap="check"
+    >
+      查询到账状态
+    </button>
+  </view>
+</view>

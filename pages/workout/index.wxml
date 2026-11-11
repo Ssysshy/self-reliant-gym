@@ -1,1 +1,86 @@
-<view class="page" wx:if="{{session}}"><button wx:if="{{pending}}" bindtap="retry">本组待同步 · 重试</button><view class="muted">{{session.Day.Focus}} · 已完成 {{completed}} 组</view><rest-timer wx:if="{{left}}" left="{{left}}" bind:finish="skip"/> <block wx:elif="{{item}}"><view class="title">{{item.Name}}</view><view class="sub">第 {{group}} / {{item.Sets}} 组</view><view>实际次数</view><input type="number" value="{{reps}}" bindinput="input"/><view class="row">重量（公斤，选填）</view><input type="digit" value="{{weight}}" bindinput="weight"/><view class="row">组间休息</view><text wx:for="{{[30,60,90]}}" wx:key="*this" class="chip {{rest===item?'on':''}}" data-v="{{item}}" bindtap="duration">{{item}} 秒</text><button class="primary" bindtap="record">完成本组</button><button data-skip="{{true}}" bindtap="record">跳过此动作剩余组</button></block><view wx:else class="title">已完成全部组数</view><button data-finish="{{true}}" bindtap="record">结束训练</button></view>
+<view class="page" wx:if="{{ ready }}">
+  <view class="head">
+    <view class="title">{{ focus }}</view>
+    <view class="progress-note">已完成 {{ completed }} / {{ total }} 组</view>
+    <view class="bar">
+      <view class="bar-fill" style="width: {{ percent }}%"></view>
+    </view>
+  </view>
+
+  <view wx:if="{{ error }}" class="pending" bindtap="retry">{{ error }}</view>
+
+  <block wx:if="{{ saved }}">
+    <view class="done">
+      <view class="done-title">今天的训练已记录</view>
+      <view class="muted">
+        {{ focus }} · {{ completed }} / {{ total }} 组，可在「记录与账户」回看每组次数。
+      </view>
+    </view>
+    <button class="primary" bindtap="back">返回计划</button>
+  </block>
+
+  <block wx:elif="{{ left }}">
+    <rest-timer left="{{ left }}" bind:finish="skipRest" />
+    <view class="link" bindtap="confirmEnd">提前结束训练</view>
+  </block>
+
+  <block wx:else>
+    <block wx:if="{{ item }}">
+      <view class="exercise">
+        <view class="exercise-name">{{ item.Name }}</view>
+        <view class="pill">第 {{ group }} / {{ item.Sets }} 组</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">实际次数</view>
+        <view class="counter">
+          <view class="counter-btn" data-d="-1" bindtap="bump">−</view>
+          <input class="counter-input" type="number" value="{{ reps }}" bindinput="input" />
+          <view class="counter-btn" data-d="1" bindtap="bump">＋</view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">
+          重量
+          <text class="section-note">选填</text>
+        </view>
+        <view class="field-row">
+          <input
+            class="field"
+            type="digit"
+            value="{{ weight }}"
+            placeholder="0"
+            bindinput="weight"
+          />
+          <text class="field-unit">kg</text>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">组间休息</view>
+        <view class="seg">
+          <view
+            wx:for="{{ [30, 60, 90] }}"
+            wx:key="*this"
+            class="seg-item {{ rest === item ? 'on' : '' }}"
+            data-v="{{ item }}"
+            bindtap="duration"
+          >
+            {{ item }} 秒
+          </view>
+        </view>
+      </view>
+
+      <button class="primary" bindtap="record" loading="{{ saving }}">完成本组</button>
+      <view class="link" data-skip="{{ true }}" bindtap="record">跳过此动作剩余组</view>
+    </block>
+
+    <view wx:else class="done">
+      <view class="done-title">全部组数已完成</view>
+      <view class="muted">正在保存这一场训练。</view>
+    </view>
+
+    <view class="finish" bindtap="confirmEnd">结束训练</view>
+  </block>
+</view>

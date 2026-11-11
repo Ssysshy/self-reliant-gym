@@ -1,0 +1,212 @@
+@import "../../styles/card.wxss";
+@import "../../styles/interactive.wxss";
+@import "../../styles/form.wxss";
+
+button {
+  box-sizing: border-box;
+  width: 100%;
+}
+/* 去掉小程序按钮默认的 1px 描边，避免和 .ghost 自己的描边叠成双层 */
+button::after {
+  border: none;
+}
+
+/* 本周进度：七个格子，练过的是实心，今天是描边 */
+.week {
+  display: flex;
+  gap: 10rpx;
+  margin-top: 10rpx;
+}
+.week-day {
+  flex: 1;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f2;
+  color: #a8a8a4;
+  border-radius: 14rpx;
+  font-size: 26rpx;
+  border: 2rpx solid transparent;
+}
+.week-day.done {
+  background: #191919;
+  color: #fff;
+}
+.week-day.today {
+  border-color: #191919;
+  color: #191919;
+}
+.week-day.done.today {
+  color: #fff;
+}
+.week-note {
+  color: #999;
+  font-size: 24rpx;
+  margin: 14rpx 0 32rpx;
+}
+
+/* 未结束的训练：全页唯一的深色卡片，用来抢视觉 */
+.resume {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: #191919;
+  color: #fff;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin-bottom: 26rpx;
+}
+.resume-title {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.resume-sub {
+  color: #b9b9b6;
+  font-size: 24rpx;
+  margin-top: 8rpx;
+}
+.resume-arrow {
+  color: #777;
+  font-size: 36rpx;
+  line-height: 1;
+}
+
+/* 最近一次训练：一行低调的回顾，不和「继续训练」抢注意力 */
+.last {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6rpx 6rpx;
+  margin: -6rpx 0 24rpx;
+}
+.last-label {
+  color: #aaa;
+  font-size: 24rpx;
+}
+.last-value {
+  color: #666;
+  font-size: 24rpx;
+}
+
+/* 计划卡：标题 + 训练日行 + 两个操作 */
+.plan {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.plan-head {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+.plan-name {
+  flex: 1;
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.badge {
+  background: #191919;
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+}
+.days {
+  margin: 6rpx 0 22rpx;
+}
+.day-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 0;
+  border-top: 1rpx solid #f0f0ee;
+}
+.day-row:first-child {
+  border-top: 0;
+  padding-top: 16rpx;
+}
+.day-week {
+  width: 92rpx;
+  color: #888;
+  font-size: 26rpx;
+}
+.day-focus {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.day-count {
+  color: #aaa;
+  font-size: 24rpx;
+}
+.plan-actions {
+  margin-top: 4rpx;
+}
+.plan-actions button {
+  margin: 12rpx 0 0;
+}
+.plan-actions button:first-child {
+  margin-top: 0;
+}
+
+/* 底部两个次要入口并排 */
+.duo {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 10rpx;
+}
+.duo button {
+  flex: 1;
+  width: auto;
+  margin: 0;
+}
+
+/* 编辑态：动作卡与三格数字 */
+.item {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.item-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+.item-name {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.item-remove {
+  color: #a1a19d;
+  font-size: 24rpx;
+  padding-left: 20rpx;
+}
+.nums {
+  display: flex;
+  gap: 12rpx;
+}
+.num {
+  flex: 1;
+  background: #f4f4f2;
+  border-radius: 14rpx;
+  padding: 14rpx 10rpx;
+  text-align: center;
+}
+.num-label {
+  color: #999;
+  font-size: 22rpx;
+  margin-bottom: 8rpx;
+}
+.num-input {
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  background: transparent;
+  padding: 0;
+  height: 56rpx;
+  min-height: 56rpx;
+}

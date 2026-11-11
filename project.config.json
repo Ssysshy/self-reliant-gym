@@ -1,41 +1,79 @@
 {
   "description": "撸铁不求人",
   "compileType": "miniprogram",
-  "appid": "touristappid",
+  "appid": "wx937da8e91caefe9e",
   "miniprogramRoot": "./",
   "setting": {
     "es6": true,
     "minified": true,
-    "useCompilerPlugins": [
-      "typescript"
-    ]
+    "useCompilerPlugins": ["typescript"],
+    "postcss": false,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "enhance": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
   },
   "packOptions": {
     "ignore": [
       {
-        "type": "folder",
-        "value": "docs"
+        "value": "docs",
+        "type": "folder"
       },
       {
-        "type": "file",
-        "value": "pnpm-lock.yaml"
+        "value": "pnpm-lock.yaml",
+        "type": "file"
       },
       {
-        "type": "file",
-        "value": "tsconfig.json"
+        "value": "tsconfig.json",
+        "type": "file"
       },
       {
-        "type": "file",
-        "value": "package.json"
+        "value": "package.json",
+        "type": "file"
       },
       {
-        "type": "file",
-        "value": "README.md"
+        "value": "README.md",
+        "type": "file"
       },
       {
-        "type": "file",
-        "value": "LICENSE"
+        "value": "LICENSE",
+        "type": "file"
+      },
+      {
+        "value": "node_modules",
+        "type": "folder"
+      },
+      {
+        "value": ".workbuddy",
+        "type": "folder"
+      },
+      {
+        "value": ".vscode",
+        "type": "folder"
+      },
+      {
+        "value": ".prettierrc",
+        "type": "file"
+      },
+      {
+        "value": ".prettierignore",
+        "type": "file"
       }
-    ]
-  }
+    ],
+    "include": []
+  },
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
 }

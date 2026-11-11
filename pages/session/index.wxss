@@ -1,0 +1,33 @@
+@import "../../styles/form.wxss";
+
+/* 单个动作：名称与目标在上一行，实际次数单独一行放大显示 */
+.item {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 26rpx 28rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+.item-name {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.item-target {
+  color: #999;
+  font-size: 24rpx;
+}
+.item-actual {
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+.item-actual.miss {
+  font-weight: 400;
+  color: #b0b0ac;
+}

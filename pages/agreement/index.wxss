@@ -1,0 +1,32 @@
+@import "../../styles/form.wxss";
+
+/* 与「隐私说明」同一套条款排版：白底、黑色小标题、灰底圆点正文 */
+.block {
+  margin: 34rpx 0;
+}
+.block-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+.block-line {
+  position: relative;
+  padding-left: 24rpx;
+  color: #555;
+  font-size: 27rpx;
+  line-height: 1.8;
+  margin-bottom: 6rpx;
+}
+.block-line::before {
+  content: "·";
+  position: absolute;
+  left: 4rpx;
+  color: #b0b0ac;
+}
+
+.foot {
+  margin-top: 56rpx;
+  color: #a8a8a4;
+  font-size: 24rpx;
+  text-align: center;
+}

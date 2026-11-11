@@ -1,0 +1,64 @@
+/**
+ * 卡片族样式片段：卡片容器 + 列表 + 标题 + 弹性占位。
+ * 被 pages/home、pages/plans、pages/account、pages/history 通过 @import 引入。
+ */
+.card,
+.panel {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.card {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+.label {
+  font-weight: 600;
+  font-size: 32rpx;
+}
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 列表容器：整块描边 + 行内分隔，用于二级页可以点进去的选择列表 */
+.list {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  overflow: hidden;
+  background: #fff;
+}
+.row-item {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 26rpx 28rpx;
+  border-bottom: 1rpx solid #f0f0ee;
+}
+.row-item:last-child {
+  border-bottom: 0;
+}
+.row-main {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.row-meta {
+  color: #999;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+.chev {
+  color: #c8c8c4;
+  font-size: 34rpx;
+  line-height: 1;
+}
+.tag {
+  font-size: 22rpx;
+  color: #666;
+  background: #f4f4f2;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+}

@@ -8,25 +8,112 @@ importers:
 
   .:
     devDependencies:
+      '@tofrankie/prettier-plugin-wxml':
+        specifier: ^0.1.0
+        version: 0.1.0(prettier@3.9.10)
       miniprogram-api-typings:
         specifier: ^4.1.0
         version: 4.1.3
+      prettier:
+        specifier: ^3.9.10
+        version: 3.9.10
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
 
 packages:
 
+  '@babel/helper-string-parser@7.29.13':
+    resolution: {integrity: sha512-fWegr+WsEsiMVW4KUNdIIzzMTZSzNiqhy0//6+2MRi2d5NFNsL/AYwBQW8eBnRbTBVRnDVzjaJEUqKaCWjMMdQ==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-validator-identifier@7.29.7':
+    resolution: {integrity: sha512-qehxGkRj55h/ff8EMaJ+cYhyaKlHIxqYDn682wQD7RNp9UujOQsHog2uS0r2vzr4pW+sXf90NeeayjcNaX3fFg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/parser@7.29.13':
+    resolution: {integrity: sha512-fJM50YYjlTiBhgdkGmC1tBpv+FMAyo4annf2X6Aks+0yRlaiVkYW/3f07xAfVVkYIoZ9fFZp+mEThUFnuybhkQ==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/types@7.29.11':
+    resolution: {integrity: sha512-WCsemW40Cpc6gouC1SrY6PBaZ+oLRlEVY9XBvZBI7il/HyUrb2nJ505wE1MHEFyDZNnrWDEuy4jL50WVHfTTSQ==}
+    engines: {node: '>=6.9.0'}
+
+  '@tofrankie/prettier-plugin-wxml@0.1.0':
+    resolution: {integrity: sha512-BQmvo2TZJcZXrZhFZ070vFNuREqjD9DEvWAG9F9aezSNtMoIdmtpXlcU4/ZtGs+a6haeVSdRn/oMXeXZwBM6Kg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      prettier: '>=3.0.0'
+
+  angular-html-parser@10.13.0:
+    resolution: {integrity: sha512-7s1jbhRE+I4POZHNiIRtm3FhDsfiH2dtPqdNBW2Y7vYvqcuRN1lGxPJucfLouRjiEYSvJbMg0XfOh88QTBm3Lw==}
+    engines: {node: '>= 14'}
+
   miniprogram-api-typings@4.1.3:
     resolution: {integrity: sha512-5mobiXzDS3KFJMM20cIg5m7hiFSJY0YGpgm5yzFeIJ+UP15RGOtW/ztqAhRfOQIvPBD0WyYB+WFCWaeeTTEZTQ==}
+
+  p-limit@7.3.3:
+    resolution: {integrity: sha512-SKgVvDU5TNIxQ4r30U75BNLC6a+6GOEjngrk/ysM5+Zu3oJuk1SC5ApzIzY/7PjCEjoVPMWJ0zho/4QUiEB7TQ==}
+    engines: {node: '>=20'}
+
+  prettier-plugin-organize-attributes@1.0.0:
+    resolution: {integrity: sha512-+NmameaLxbCcylEXsKPmawtzla5EE6ECqvGkpfQz4KM847fXDifB1gFnPQEpoADAq6IXg+cMI8Z0ISJEXa6fhg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      prettier: ^3.0.0
+
+  prettier@3.9.10:
+    resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
+  yocto-queue@1.2.2:
+    resolution: {integrity: sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ==}
+    engines: {node: '>=12.20'}
+
 snapshots:
+
+  '@babel/helper-string-parser@7.29.13': {}
+
+  '@babel/helper-validator-identifier@7.29.7': {}
+
+  '@babel/parser@7.29.13':
+    dependencies:
+      '@babel/types': 7.29.11
+
+  '@babel/types@7.29.11':
+    dependencies:
+      '@babel/helper-string-parser': 7.29.13
+      '@babel/helper-validator-identifier': 7.29.7
+
+  '@tofrankie/prettier-plugin-wxml@0.1.0(prettier@3.9.10)':
+    dependencies:
+      '@babel/parser': 7.29.13
+      angular-html-parser: 10.13.0
+      p-limit: 7.3.3
+      prettier: 3.9.10
+      prettier-plugin-organize-attributes: 1.0.0(prettier@3.9.10)
+
+  angular-html-parser@10.13.0: {}
 
   miniprogram-api-typings@4.1.3: {}
 
+  p-limit@7.3.3:
+    dependencies:
+      yocto-queue: 1.2.2
+
+  prettier-plugin-organize-attributes@1.0.0(prettier@3.9.10):
+    dependencies:
+      prettier: 3.9.10
+
+  prettier@3.9.10: {}
+
   typescript@5.9.3: {}
+
+  yocto-queue@1.2.2: {}
