@@ -11,7 +11,7 @@ class RequestError extends Error {
   }
 }
 
-export function request<T>(path: string, method: 'GET' | 'POST' | 'PUT' = 'GET', data: Record<string, unknown> = {}): Promise<T> {
+export function request<T>(path: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET', data: Record<string, unknown> = {}): Promise<T> {
   const app = getApp<{globalData: {apiBase: string}}>();
   return new Promise((resolve, reject) => {
     wx.request({

@@ -19,11 +19,6 @@
     <button class="primary" bindtap="back">返回计划</button>
   </block>
 
-  <block wx:elif="{{ left }}">
-    <rest-timer left="{{ left }}" bind:finish="skipRest" />
-    <view class="link" bindtap="confirmEnd">提前结束训练</view>
-  </block>
-
   <block wx:else>
     <block wx:if="{{ item }}">
       <view class="exercise">
@@ -83,4 +78,58 @@
 
     <view class="finish" bindtap="confirmEnd">结束训练</view>
   </block>
+
+  <!-- 组间休息：盖在当前动作上的弹窗，倒计时一圈走完会自动消失 -->
+  <view wx:if="{{ left && !folded }}" class="rest-mask" catchtouchmove="noop">
+    <view class="rest-card">
+      <view class="rest-head">
+        <text class="rest-title">组间休息</text>
+        <text class="rest-fold" bindtap="fold">收起</text>
+      </view>
+
+      <view
+        class="ring"
+        style="background: conic-gradient(#191919 0deg {{ deg }}deg, #ecece9 {{ deg }}deg 360deg)"
+      >
+        <view class="ring-in">
+          <view class="ring-clock">
+            <text class="ring-num">{{ left }}</text>
+            <text class="ring-unit">秒</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{ next }}" class="next">
+        <text class="next-label">{{ next.Fresh ? "下一个动作" : "下一组" }}</text>
+        <view class="next-main">
+          <text class="next-name">{{ next.Name }}</text>
+          <text class="next-meta">
+            第 {{ next.Group }} / {{ next.Sets }} 组 · {{ next.Reps }} 次
+          </text>
+        </view>
+        <text wx:if="{{ next.Last }}" class="next-last">这是今天的最后一组</text>
+      </view>
+
+      <button class="primary rest-primary" bindtap="skipRest">跳过休息</button>
+      <view class="rest-acts">
+        <text class="rest-act" data-d="10" bindtap="shift">+10s</text>
+        <text class="rest-act" data-d="-10" bindtap="shift">-10s</text>
+        <text class="rest-act" bindtap="game">{{ game ? "收起圆点" : "玩点圆点" }}</text>
+      </view>
+
+      <view wx:if="{{ game }}" class="game">
+        <view class="game-dot" style="margin-left: {{ (points % 4) * 20 }}%" bindtap="tapGame">
+          ●
+        </view>
+        <text class="game-note">命中 {{ points }} 次</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收起形态：底部一条，休息时也能回看动作，点开回到弹窗 -->
+  <view wx:if="{{ left && folded }}" class="rest-bar" bindtap="expand">
+    <text class="rest-bar-left">休息中 {{ left }} 秒</text>
+    <text wx:if="{{ next }}" class="rest-bar-hint">{{ next.Name }} · 第 {{ next.Group }} 组</text>
+    <text wx:else class="rest-bar-hint">点击展开</text>
+  </view>
 </view>

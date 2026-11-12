@@ -70,3 +70,190 @@ button::after {
   padding: 24rpx;
   border-top: 1rpx solid #f0f0ee;
 }
+
+/* 组间休息弹窗：盖在训练页上，倒计时环是唯一重心。
+   环用 conic-gradient 画（内核不支持时退化成浅灰整圆，不影响读数）。 */
+.rest-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  background: rgba(25, 25, 25, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 48rpx;
+}
+.rest-card {
+  width: 100%;
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 34rpx 36rpx 24rpx;
+  box-sizing: border-box;
+}
+.rest-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.rest-title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.rest-fold {
+  color: #999;
+  font-size: 24rpx;
+  padding: 8rpx 0 8rpx 16rpx;
+}
+.ring {
+  width: 336rpx;
+  height: 336rpx;
+  border-radius: 50%;
+  margin: 30rpx auto 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 兜底色：万一内核不支持 conic-gradient，也还是一圈浅灰，不影响读秒 */
+  background: #ecece9;
+}
+.ring-in {
+  position: relative;
+  width: 278rpx;
+  height: 278rpx;
+  border-radius: 50%;
+  background: #fff;
+}
+/* 数字用「绝对定位 + translate」居中，不靠 flex 基线对齐：
+   基线对齐会把整行按基线摆，行高一大数字就浮到中心上方。
+   line-height 收紧到 1，让盒子高度等于字高，居中才是视觉居中。 */
+.ring-clock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+  white-space: nowrap;
+}
+.ring-num {
+  font-size: 96rpx;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -3rpx;
+}
+/* 「秒」挂在数字右侧、贴基线下沿，不参与数字的居中计算 */
+.ring-unit {
+  position: absolute;
+  left: 100%;
+  bottom: 10rpx;
+  margin-left: 8rpx;
+  color: #999;
+  font-size: 26rpx;
+  line-height: 1;
+}
+.next {
+  background: #f6f6f4;
+  border-radius: 18rpx;
+  padding: 20rpx 24rpx;
+}
+.next-label {
+  color: #999;
+  font-size: 22rpx;
+}
+.next-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+/* 动作名吃掉剩余宽度并按需换行，右侧组数次数不跟着被挤 */
+.next-name {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.next-meta {
+  color: #777;
+  font-size: 23rpx;
+  flex: none;
+}
+.next-last {
+  display: block;
+  color: #999;
+  font-size: 22rpx;
+  margin-top: 8rpx;
+}
+.rest-primary {
+  margin: 24rpx 0 0;
+}
+.rest-acts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 44rpx;
+  margin-top: 16rpx;
+}
+.rest-act {
+  color: #888;
+  font-size: 25rpx;
+  padding: 10rpx 4rpx;
+}
+.game {
+  display: flex;
+  align-items: center;
+  background: #f4f4f2;
+  border-radius: 16rpx;
+  height: 96rpx;
+  margin-top: 14rpx;
+  padding-right: 20rpx;
+}
+.game-dot {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: #191919;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+}
+.game-note {
+  margin-left: auto;
+  color: #999;
+  font-size: 22rpx;
+}
+
+/* 收起后的一条：贴在底部，点一下回到弹窗 */
+.rest-bar {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: 34rpx;
+  z-index: 20;
+  background: #191919;
+  color: #fff;
+  border-radius: 999rpx;
+  padding: 22rpx 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+.rest-bar-left {
+  font-size: 27rpx;
+  font-weight: 600;
+  flex: none;
+}
+.rest-bar-hint {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 23rpx;
+  flex: 1;
+  text-align: right;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

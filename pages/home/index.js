@@ -37,7 +37,7 @@ Page({
     }
     if (u.Experience === "训练老炮") {
       this.dismissed = true;
-      wx.navigateTo({ url: "/pages/plans/index?edit=1" });
+      wx.navigateTo({ url: "/pages/custom/index" });
       return;
     }
     const [templates, exercises] = await Promise.all([
@@ -169,6 +169,6 @@ Page({
   },
   start() {
     this.close();
-    wx.navigateTo({ url: "/pages/workout/index?id=" + this.data.plan.ID });
+    wx.navigateTo({ url: "/pages/preview/index?id=" + this.data.plan.ID });
   },
 });

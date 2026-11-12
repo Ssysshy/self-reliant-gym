@@ -2,7 +2,7 @@
   <view class="title">训练计划</view>
 
   <!-- 计划库：本周进度 + 当前计划的训练日 -->
-  <block wx:if="{{ !smart && !edit }}">
+  <block wx:if="{{ !smart }}">
     <view class="week">
       <view
         wx:for="{{ weekView }}"
@@ -40,6 +40,9 @@
       <view class="plan-head">
         <text class="plan-name">{{ item.Name }}</text>
         <text wx:if="{{ activeId === item.ID }}" class="badge">当前</text>
+        <text wx:else class="badge off">未启用</text>
+        <text class="plan-adjust" data-id="{{ item.ID }}" bindtap="modify">调整</text>
+        <text class="plan-del" data-i="{{ index }}" bindtap="del">删除</text>
       </view>
       <view class="days">
         <view
@@ -58,7 +61,6 @@
         </view>
       </view>
       <view class="plan-actions">
-        <button class="ghost" data-i="{{ index }}" bindtap="modify">调整并另存</button>
         <button class="primary" data-id="{{ item.ID }}" bindtap="start">开始或继续训练</button>
       </view>
     </view>
@@ -80,7 +82,7 @@
   </block>
 
   <!-- 智能生成：先收条件，再出草案 -->
-  <block wx:elif="{{ smart }}">
+  <block wx:else>
     <view class="sub">告诉它你什么时候练、手上有什么器材。</view>
 
     <view class="section">
@@ -144,87 +146,5 @@
 
     <button class="primary" bindtap="generate">生成计划草案</button>
     <view class="link" bindtap="cancel">返回计划库</view>
-  </block>
-
-  <!-- 编辑：一周的训练日与动作 -->
-  <block wx:else>
-    <view class="sub">一个训练日一组动作，保存后再排下一天。</view>
-
-    <view class="section">
-      <view class="section-title">计划名称</view>
-      <input class="field" value="{{ name }}" placeholder="例如：上下肢三分化" bindinput="name" />
-    </view>
-
-    <view class="section">
-      <view class="section-title">训练日</view>
-      <view class="seg">
-        <view
-          wx:for="{{ weekChips }}"
-          wx:key="d"
-          class="seg-item {{ week === item.d ? 'on' : '' }}"
-          data-v="{{ item.d }}"
-          bindtap="pickWeek"
-        >
-          {{ item.label }}
-        </view>
-      </view>
-    </view>
-
-    <view class="section">
-      <view class="section-title">
-        动作
-        <text class="section-note">周{{ week }}</text>
-      </view>
-      <picker range="{{ exercises }}" range-key="Name" bindchange="add">
-        <view class="card">
-          <view class="grow row-main">添加动作</view>
-          <text class="chev">›</text>
-        </view>
-      </picker>
-
-      <view wx:for="{{ items }}" wx:key="index" class="item">
-        <view class="item-head">
-          <text class="grow item-name">{{ item.Name }}</text>
-          <text class="item-remove" data-i="{{ index }}" bindtap="removeItem">移除</text>
-        </view>
-        <view class="nums">
-          <view
-            wx:for="{{ ['Sets', 'Reps', 'Rest'] }}"
-            wx:for-item="k"
-            wx:for-index="n"
-            wx:key="*this"
-            class="num"
-          >
-            <view class="num-label">{{ ["组数", "次数", "休息秒"][n] }}</view>
-            <input
-              class="num-input"
-              type="number"
-              value="{{ item[k] }}"
-              data-i="{{ index }}"
-              data-k="{{ k }}"
-              bindinput="field"
-            />
-          </view>
-        </view>
-      </view>
-      <view wx:if="{{ !items.length }}" class="hint">
-        周{{ week }}还没有动作，先加一个再保存。
-      </view>
-
-      <button class="ghost" bindtap="day">保存此训练日</button>
-    </view>
-
-    <view class="section" wx:if="{{ days.length }}">
-      <view class="section-title">已安排</view>
-      <view class="list">
-        <view wx:for="{{ days }}" wx:key="Weekday" class="row-item">
-          <text class="day-week">周{{ item.Weekday }}</text>
-          <text class="grow row-main">{{ item.Focus }}</text>
-          <text class="muted">{{ item.Items.length }} 个动作</text>
-        </view>
-      </view>
-    </view>
-
-    <button class="primary" bindtap="save">保存计划</button>
   </block>
 </view>

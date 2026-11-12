@@ -30,14 +30,28 @@ app.wxss                    全局基座：page、.page、.title/.sub/.muted/.ro
 styles/card.wxss            卡片族片段：.card/.panel/.label/.grow
 styles/interactive.wxss     交互片段：.primary/.chip/.on
 pages/<page>/index.wxss     页面专属样式，按需 @import 上面的片段
-components/rest-timer/index.wxss   组件专属样式（组件已设 styleIsolation: apply-shared，可继承 app.wxss）
 ```
+
+（休息倒计时弹窗的样式跟着训练页走，写在 `pages/workout/index.wxss` 的 `.rest-*` 段；原先的 `components/rest-timer` 组件已并入该页。）
 
 约定：
 
 - 只在本页使用的类写进该页 `index.wxss`，不会外泄到其它页面
 - 两个及以上页面共用的样式放 `styles/`，页面用 `@import "../../styles/xxx.wxss";` 引入（必须写在文件顶部）
 - 排版原子（标题、正文、行距）留在 `app.wxss`，保证全站观感一致
+
+## 自定义周计划（pages/custom）
+
+排周计划是一个独立页面，计划库（`pages/plans`）只负责展示和跳转。入口有三种，都落在同一页：
+
+- 空手新建：`/pages/custom/index`
+- 调整已有计划：`/pages/custom/index?id=<计划 ID>`，保存时带 `ID` 原地覆盖
+- 从模板或智能草案起稿：`?template=<模板下标>` / `?draft=1`。草案动作太多塞不进 URL，
+  由计划库写进本地缓存 `plan:draft` 交接，编辑页读到即清掉
+
+保存成功后弹「让我们马上开练吧」：确认则 `redirectTo` 去清单页（返回时直接回计划库，
+不会退回已经保存过的编辑页），取消则 `navigateBack`。计划库的计划列表放在 `onShow` 里拉，
+这样从编辑页退回时能立刻看到新增或改名后的计划。
 
 ## 动作库（pages/library）
 

@@ -1,4 +1,1 @@
-{
-  "usingComponents": { "rest-timer": "/components/rest-timer/index" },
-  "navigationBarTitleText": "训练计时器"
-}
+{ "navigationBarTitleText": "训练计时器" }

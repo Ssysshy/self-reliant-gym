@@ -16,13 +16,4 @@
     </view>
     <text class="muted">{{ index === 2 ? member : "" }} ›</text>
   </view>
-  <view wx:if="{{ section === 'PRO 会员' }}" class="panel">
-    会员状态：{{ member }}
-    <view wx:for="{{ products }}" wx:key="Days" class="row">
-      {{ item.Days }} 天 · ¥{{ item.Price / 100 }}
-      <button disabled="{{ !item.Enabled }}" data-days="{{ item.Days }}" bindtap="buy">
-        {{ item.Enabled ? "开通" : "暂未开放" }}
-      </button>
-    </view>
-  </view>
 </view>

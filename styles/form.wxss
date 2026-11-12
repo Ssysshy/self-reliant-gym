@@ -1,6 +1,6 @@
 /**
  * 表单与信息块样式片段：分区标题、输入框、数字计数器、进度条。
- * 被 pages/plans、pages/workout、pages/session 通过 @import 引入。
+ * 被 pages/plans、pages/custom、pages/workout、pages/session 通过 @import 引入。
  */
 .section {
   margin: 30rpx 0 38rpx;

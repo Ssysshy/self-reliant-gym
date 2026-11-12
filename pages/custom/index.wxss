@@ -1,0 +1,67 @@
+@import "../../styles/card.wxss";
+@import "../../styles/interactive.wxss";
+@import "../../styles/form.wxss";
+
+button {
+  box-sizing: border-box;
+  width: 100%;
+}
+/* 去掉小程序按钮默认的 1px 描边，避免和 .ghost 自己的描边叠成双层 */
+button::after {
+  border: none;
+}
+
+/* 「已安排」里的星期列：和计划库里训练日行的宽度对齐 */
+.day-week {
+  width: 92rpx;
+  color: #888;
+  font-size: 26rpx;
+}
+
+/* 动作卡：名称一行，下面三格数字；改数字是最频繁的操作，格子要够大够好按 */
+.item {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.item-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+.item-name {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.item-remove {
+  color: #a1a19d;
+  font-size: 24rpx;
+  padding-left: 20rpx;
+}
+.nums {
+  display: flex;
+  gap: 12rpx;
+}
+.num {
+  flex: 1;
+  background: #f4f4f2;
+  border-radius: 14rpx;
+  padding: 14rpx 10rpx;
+  text-align: center;
+}
+.num-label {
+  color: #999;
+  font-size: 22rpx;
+  margin-bottom: 8rpx;
+}
+.num-input {
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  background: transparent;
+  padding: 0;
+  height: 56rpx;
+  min-height: 56rpx;
+}

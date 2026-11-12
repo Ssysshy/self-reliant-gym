@@ -1,0 +1,46 @@
+<view class="page">
+  <view class="title">PRO 会员</view>
+  <view class="sub">开通后可智能生成训练计划。到期后已保存的计划仍可继续执行。</view>
+
+  <view class="status">
+    <view class="status-head">
+      <view class="status-label">当前状态</view>
+      <view class="status-tag {{ active ? 'live' : '' }}">
+        {{ active ? "生效中" : "未开通" }}
+      </view>
+    </view>
+    <view class="status-main">{{ active ? expire + " 到期" : "开通立即生效" }}</view>
+    <view class="status-note">
+      {{ active ? "到期前可继续使用全部会员功能" : "一次购买，不自动续费" }}
+    </view>
+  </view>
+
+  <view wx:if="{{ !ready }}" class="hint">正在读取套餐…</view>
+  <view wx:elif="{{ !products.length }}" class="hint">暂时没有可开通的套餐，请稍后再试。</view>
+
+  <view wx:for="{{ products }}" wx:key="Days" class="plan {{ item.best ? 'best' : '' }}">
+    <view class="plan-left">
+      <view class="plan-days">
+        {{ item.Days }} 天
+        <view wx:if="{{ item.best }}" class="plan-tag">更划算</view>
+      </view>
+      <view class="plan-note">{{ item.note }}</view>
+      <view class="plan-per">折合 ¥{{ item.per }} / 天</view>
+    </view>
+    <view class="plan-right">
+      <view class="plan-price">¥{{ item.yuan }}</view>
+      <view
+        class="plan-btn {{ item.Enabled ? '' : 'off' }}"
+        data-days="{{ item.Days }}"
+        bindtap="buy"
+      >
+        {{ paying === item.Days ? "处理中…" : item.btn }}
+      </view>
+    </view>
+  </view>
+
+  <view class="foot">
+    <view class="foot-link" bindtap="orders">支付后没到账？去「我的订单」查询到账状态 ›</view>
+    <view class="foot-note">会员为一次性购买，不会自动续费。</view>
+  </view>
+</view>

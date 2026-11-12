@@ -1,0 +1,87 @@
+<view class="page">
+  <view class="title">自定义周计划</view>
+  <view class="sub">
+    {{
+      planId
+        ? "改的是这份现有计划，保存后原地覆盖，不会多出一份。"
+        : "一个训练日一组动作，排完一周再保存。保存后它就是你的当前计划。"
+    }}
+  </view>
+
+  <view class="section">
+    <view class="section-title">计划名称</view>
+    <input class="field" value="{{ name }}" placeholder="例如：上下肢三分化" bindinput="name" />
+  </view>
+
+  <view class="section">
+    <view class="section-title">训练日</view>
+    <view class="seg">
+      <view
+        wx:for="{{ weekChips }}"
+        wx:key="d"
+        class="seg-item {{ week === item.d ? 'on' : '' }}"
+        data-v="{{ item.d }}"
+        bindtap="pickWeek"
+      >
+        {{ item.label }}
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">
+      动作
+      <text class="section-note">周{{ week }}</text>
+    </view>
+    <picker range="{{ exercises }}" range-key="Name" bindchange="add">
+      <view class="card">
+        <view class="grow row-main">添加动作</view>
+        <text class="chev">›</text>
+      </view>
+    </picker>
+
+    <view wx:for="{{ items }}" wx:key="index" class="item">
+      <view class="item-head">
+        <text class="grow item-name">{{ item.Name }}</text>
+        <text class="item-remove" data-i="{{ index }}" bindtap="removeItem">移除</text>
+      </view>
+      <view class="nums">
+        <view
+          wx:for="{{ ['Sets', 'Reps', 'Rest'] }}"
+          wx:for-item="k"
+          wx:for-index="n"
+          wx:key="*this"
+          class="num"
+        >
+          <view class="num-label">{{ ["组数", "次数", "休息秒"][n] }}</view>
+          <input
+            class="num-input"
+            type="number"
+            value="{{ item[k] }}"
+            data-i="{{ index }}"
+            data-k="{{ k }}"
+            bindinput="field"
+          />
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{ !items.length }}" class="hint">周{{ week }}还没有动作，先加一个再保存。</view>
+
+    <button class="ghost" bindtap="day">保存此训练日</button>
+  </view>
+
+  <view class="section" wx:if="{{ days.length }}">
+    <view class="section-title">已安排</view>
+    <view class="list">
+      <view wx:for="{{ days }}" wx:key="Weekday" class="row-item">
+        <text class="day-week">周{{ item.Weekday }}</text>
+        <text class="grow row-main">{{ item.Focus }}</text>
+        <text class="muted">{{ item.Items.length }} 个动作</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="primary" bindtap="save" loading="{{ saving }}">
+    {{ planId ? "保存修改" : "保存计划" }}
+  </button>
+</view>

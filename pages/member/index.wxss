@@ -1,0 +1,136 @@
+@import "../../styles/form.wxss";
+
+/* PRO 会员：状态卡 + 套餐卡列表，延续全站黑白灰与细线描边 */
+
+/* 状态卡：浅底，与可点的白色套餐卡区分开 */
+.status {
+  background: #fafaf8;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 36rpx;
+}
+.status-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.status-label {
+  font-size: 26rpx;
+  color: #888;
+}
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 22rpx;
+  line-height: 1;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: #f0f0ee;
+  color: #999;
+}
+.status-tag.live {
+  background: #191919;
+  color: #fff;
+}
+.status-main {
+  font-size: 38rpx;
+  font-weight: 700;
+  margin-top: 16rpx;
+}
+.status-note {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+/* 套餐卡：左侧期限与权益，右侧价格与开通按钮 */
+.plan {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 30rpx 28rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.plan.best {
+  border-color: #191919;
+}
+.plan-left {
+  flex: 1;
+  min-width: 0;
+}
+.plan-days {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+.plan-tag {
+  font-size: 20rpx;
+  font-weight: 500;
+  line-height: 1;
+  padding: 7rpx 12rpx;
+  border-radius: 6rpx;
+  background: #191919;
+  color: #fff;
+}
+.plan-note {
+  font-size: 25rpx;
+  color: #777;
+  margin-top: 10rpx;
+}
+.plan-per {
+  font-size: 23rpx;
+  color: #b0b0ac;
+  margin-top: 6rpx;
+}
+.plan-right {
+  text-align: right;
+}
+.plan-price {
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.plan-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 148rpx;
+  height: 64rpx;
+  padding: 0 28rpx;
+  margin-top: 14rpx;
+  border-radius: 999rpx;
+  background: #171717;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+.plan-btn.off {
+  background: #f4f4f2;
+  color: #b0b0ac;
+  font-weight: 400;
+}
+
+/* 支付问题入口 */
+.foot {
+  margin-top: 48rpx;
+}
+.foot-link {
+  font-size: 26rpx;
+  color: #666;
+  text-align: center;
+  padding: 20rpx 0;
+}
+.foot-note {
+  font-size: 23rpx;
+  color: #b0b0ac;
+  line-height: 1.6;
+  text-align: center;
+  margin-top: 10rpx;
+}

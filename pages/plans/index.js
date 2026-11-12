@@ -2,38 +2,32 @@ const { request, report } = require("../../api");
 
 const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
 
+// 计划库：本周进度 + 已保存的计划 + 两条新建入口（智能生成 / 自定义周计划）。
+// 排周计划本身在 pages/custom，这一页只负责展示和往里跳。
 Page({
   data: {
     plans: [],
     templates: [],
-    edit: false,
     smart: false,
     selectedDays: [],
     selectedGear: [],
     focus: "全身",
     minutes: 30,
-    days: [],
-    name: "",
-    week: 1,
-    exercises: [],
-    items: [],
-    // 展示用：本周进度、训练日选择、器材与部位标签、编辑态周几
+    // 展示用：本周进度、训练日选择、器材与部位标签
     completed: [],
     local: null,
     lastSession: null,
     weekView: [],
-    weekChips: WEEK.map((label, i) => ({ d: i + 1, label: "周" + label })),
     dayOpts: WEEK.map((label, i) => ({ d: i + 1, label, on: false })),
     gearOpts: [],
     focusOpts: [],
   },
-  async onLoad(q) {
+  async onLoad() {
     try {
-      const [u, plans, templates, exercises] = await Promise.all(
-        ["/me", "/plans", "/templates", "/exercises"].map((p) => request(p)),
-      );
-      this.active = u.Active;
-      this.member = new Date(u.Expires) > new Date();
+      const [templates, exercises] = await Promise.all([
+        request("/templates"),
+        request("/exercises"),
+      ]);
       const focuses = ["全身", ...new Set(exercises.map((x) => x.Muscle))];
       this.setData({
         // 可用器材按分类勾选（器械/杠铃/哑铃…），不按具体机型，否则选项会多到没法选
@@ -42,18 +36,21 @@ Page({
           on: false,
         })),
         focusOpts: focuses.map((v) => ({ v, on: v === "全身" })),
-        plans,
         templates,
-        exercises,
-        edit: q.edit === "1",
       });
     } catch (e) {
       report(e);
     }
   },
+  // 计划列表也放在 onShow：从自定义周计划页保存或删除后退回来，这一页不会重新 onLoad
   async onShow() {
     try {
-      const [rows, user] = await Promise.all([request("/sessions"), request("/me")]);
+      const [rows, user, plans] = await Promise.all([
+        request("/sessions"),
+        request("/me"),
+        request("/plans"),
+      ]);
+      this.uid = user.ID;
       this.member = new Date(user.Expires) > new Date();
       const today = new Date(Date.now() + 8 * 3600000);
       const start =
@@ -89,6 +86,7 @@ Page({
       const done = progress ? groups(progress) : 0;
       this.setData({
         completed,
+        plans,
         activeId: user.Active,
         local:
           progress && done > 0
@@ -112,18 +110,40 @@ Page({
       report(err);
     }
   },
+  // 模板只是起稿的底子：套用后进编辑页，改完保存才成为自己的一份
   useTemplate(e) {
-    const p = this.data.templates[e.detail.value];
-    this.setData({ edit: true, name: p.Name, days: p.Days });
+    wx.navigateTo({ url: "/pages/custom/index?template=" + e.detail.value });
   },
   modify(e) {
-    const p = this.data.plans[e.currentTarget.dataset.i];
-    this.setData({ edit: true, name: p.Name, days: p.Days, items: [] });
+    wx.navigateTo({ url: "/pages/custom/index?id=" + e.currentTarget.dataset.id });
   },
-  removeItem(e) {
-    this.setData({
-      items: this.data.items.filter((_, i) => i !== e.currentTarget.dataset.i),
+  // 删整份计划（训练日一起删）。历史训练记录是当时的快照，不跟着删。
+  // 删的正好是当前计划时，后端把当前位顶到剩下最新的一份，这里只跟着刷新 activeId。
+  async del(e) {
+    const p = this.data.plans[e.currentTarget.dataset.i];
+    if (!p) return;
+    const r = await wx.showModal({
+      title: "删除「" + p.Name + "」？",
+      content: "这份计划和它的 " + (p.Days || []).length + " 个训练日会一起删掉，练过的记录保留。",
+      confirmText: "删除",
+      confirmColor: "#d92b2b",
     });
+    if (!r.confirm) return;
+    try {
+      const res = await request("/plans/" + p.ID, "DELETE");
+      // 这份计划上还有没练完的进度，删掉后一并清掉，否则「继续未结束训练」会指向不存在的计划
+      const local = this.data.local;
+      const stale = !!local && local.PlanID === p.ID;
+      if (stale) wx.removeStorageSync("workout:" + this.uid);
+      this.setData({
+        plans: this.data.plans.filter((x) => x.ID !== p.ID),
+        activeId: res.Active,
+        local: stale ? null : local,
+      });
+      wx.showToast({ title: "已删除", icon: "none" });
+    } catch (err) {
+      report(err);
+    }
   },
   smart() {
     if (!this.member) {
@@ -131,7 +151,7 @@ Page({
         title: "智能生成需要 PRO 会员",
         confirmText: "查看会员",
         success: (r) => {
-          if (r.confirm) wx.navigateTo({ url: "/pages/account/index?section=PRO" });
+          if (r.confirm) wx.navigateTo({ url: "/pages/member/index" });
         },
       });
       return;
@@ -187,77 +207,21 @@ Page({
         Focus: d.focus,
         Minutes: Number(d.minutes),
       });
-      this.setData({ smart: false, edit: true, days: p.Days, name: p.Name });
+      // 草案动作太多塞不进 URL，暂存到本地交给编辑页，用户看过再决定保存
+      wx.setStorageSync("plan:draft", p);
+      this.setData({ smart: false });
+      wx.navigateTo({ url: "/pages/custom/index?draft=1" });
     } catch (e) {
       report(e);
     }
   },
+  // 自定义周计划是独立页，这一页只留入口
   edit() {
-    this.setData({ edit: true, days: [], items: [], name: "" });
+    wx.navigateTo({ url: "/pages/custom/index" });
   },
-  name(e) {
-    this.setData({ name: e.detail.value });
-  },
-  pickWeek(e) {
-    const week = e.currentTarget.dataset.v;
-    this.setData({
-      week,
-      items: this.data.days.find((d) => d.Weekday === week)?.Items || [],
-    });
-  },
-  add(e) {
-    const x = this.data.exercises[e.detail.value];
-    this.setData({
-      items: [...this.data.items, { Name: x.Name, Sets: 3, Reps: 10, Rest: 60 }],
-    });
-  },
-  field(e) {
-    const { i, k } = e.currentTarget.dataset;
-    this.setData({ ["items[" + i + "]." + k]: Number(e.detail.value) });
-  },
-  day() {
-    const { week, items, days } = this.data;
-    if (!items.length) return;
-    const focus = [
-      ...new Set(items.map((i) => this.data.exercises.find((x) => x.Name === i.Name).Muscle)),
-    ].join("、");
-    this.setData({
-      days: [
-        ...days.filter((d) => d.Weekday !== week),
-        { Weekday: week, Focus: focus, Items: items },
-      ].sort((a, b) => a.Weekday - b.Weekday),
-      items: [],
-    });
-  },
-  async save() {
-    try {
-      if (this.data.items.length) this.day();
-      const { name, days } = this.data;
-      const p = await request("/plans", "POST", {
-        Operation:
-          this.operationId ||
-          (this.operationId = Date.now().toString(36) + "-" + Math.random().toString(36).slice(2)),
-        Active: this.active,
-        Custom: { Name: name, Days: days },
-      });
-      this.operationId = null;
-      this.active = p.ID;
-      this.setData({
-        activeId: p.ID,
-        plans: [p, ...this.data.plans],
-        edit: false,
-      });
-      const r = await wx.showModal({
-        title: "让我们马上开练吧",
-        confirmText: "猛攻",
-      });
-      if (r.confirm) this.go(p.ID);
-    } catch (e) {
-      report(e);
-    }
-  },
+  // 进训练统一先过清单页，看清楚这次练什么再开始
   go(id, day = 0) {
-    wx.navigateTo({ url: "/pages/workout/index?id=" + id + "&day=" + day });
+    wx.navigateTo({ url: "/pages/preview/index?id=" + id + "&day=" + day });
   },
   resume() {
     const local = this.data.local;

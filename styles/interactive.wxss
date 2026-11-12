@@ -1,6 +1,6 @@
 /**
  * 交互控件样式片段：主按钮、次要按钮、文字操作、分段选择与 chip。
- * 被 pages/home、pages/plans、pages/workout、pages/orders 通过 @import 引入。
+ * 被 pages/home、pages/plans、pages/custom、pages/workout、pages/orders 通过 @import 引入。
  */
 .primary {
   background: #171717;

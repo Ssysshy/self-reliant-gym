@@ -1,0 +1,208 @@
+@import "../../styles/form.wxss";
+@import "../../styles/card.wxss";
+
+/* 本次训练清单：垂直播放动作卡，底部固定操作条。沿用全站黑白灰 */
+
+/* 页面本身滚动，底边留出操作条的高度，否则最后一张卡被盖住 */
+.feed {
+  padding-bottom: 300rpx;
+}
+
+.head {
+  margin-bottom: 30rpx;
+}
+.head-focus {
+  font-size: 44rpx;
+  font-weight: 700;
+}
+.head-meta {
+  color: #777;
+  font-size: 25rpx;
+  margin-top: 10rpx;
+}
+
+/* 有未完成进度时的提示条 */
+.resume {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  background: #fafaf8;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 8rpx;
+}
+.resume-title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.resume-meta {
+  font-size: 23rpx;
+  color: #888;
+  margin-top: 6rpx;
+}
+.resume-restart {
+  font-size: 24rpx;
+  color: #888;
+  text-decoration: underline;
+  padding: 10rpx 0 10rpx 10rpx;
+}
+
+.list-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 36rpx 0 16rpx;
+}
+.list-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.list-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 动作卡：左缩略图，右侧名称与组次，最右是大字组数 */
+.ex {
+  display: flex;
+  align-items: flex-start;
+  gap: 22rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin: 16rpx 0;
+  background: #fff;
+}
+.ex-thumb {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 14rpx;
+  background: #f4f4f2;
+  flex: none;
+}
+.ex-thumb.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #b0b0ac;
+}
+.ex-main {
+  flex: 1;
+  min-width: 0;
+}
+.ex-top {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+}
+.ex-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 31rpx;
+  font-weight: 600;
+  line-height: 1.35;
+}
+/* 组数用等宽数字，两三位数时右边缘也齐 */
+.ex-sets {
+  flex: none;
+  font-size: 30rpx;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ex-sub {
+  font-size: 23rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+.ex-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 14rpx;
+}
+.ex-pill {
+  font-size: 21rpx;
+  line-height: 1;
+  padding: 10rpx 14rpx;
+  border-radius: 8rpx;
+  background: #f4f4f2;
+  color: #777;
+}
+.ex-pill.done {
+  background: #191919;
+  color: #fff;
+}
+/* 游标所在动作：灰底加粗，和黑色「已练」区分开 */
+.ex-pill.now {
+  background: #f0f0ee;
+  color: #191919;
+  font-weight: 600;
+}
+
+/* 「从这开始」单独占一行靠右：标签数量不同时卡片高度也保持一致 */
+.ex-more {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12rpx;
+}
+
+/* 描边按钮，和灰底标签明显区隔；点它不会进动作详情 */
+.ex-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 46rpx;
+  padding: 0 20rpx;
+  border: 2rpx solid #191919;
+  border-radius: 999rpx;
+  font-size: 21rpx;
+  font-weight: 600;
+  color: #191919;
+}
+
+.list-foot {
+  font-size: 23rpx;
+  color: #b0b0ac;
+  text-align: center;
+  margin-top: 26rpx;
+}
+
+/* 底部操作条：和屏幕底边之间始终留出空隙。
+   env(safe-area-inset-bottom) 在部分机型/模拟器上返回 0，只靠它会贴着底边，
+   所以先用 44rpx（≈22px）打底，再叠安全区；不支持 env 时回退到上一行的 44rpx。 */
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 32rpx 44rpx;
+  padding-bottom: calc(44rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.96);
+}
+.bar-ghost,
+.bar-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92rpx;
+  border-radius: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.bar-ghost {
+  width: 210rpx;
+  flex: none;
+  border: 2rpx solid #e4e4e1;
+  color: #191919;
+}
+.bar-main {
+  flex: 1;
+  background: #171717;
+  color: #fff;
+}

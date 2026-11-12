@@ -1,0 +1,72 @@
+<view class="page feed" wx:if="{{ ready }}">
+  <view class="head">
+    <view class="head-focus">{{ focus }}</view>
+    <view class="head-meta">
+      周{{ week }} · {{ items.length }} 个动作 · {{ total }} 组 · 约 {{ minutes }} 分钟
+    </view>
+  </view>
+
+  <view wx:if="{{ resumable }}" class="resume">
+    <view class="grow">
+      <view class="resume-title">这一场还没练完</view>
+      <view class="resume-meta">已练 {{ done }} / {{ total }} 组，接着上次的组次往下走</view>
+    </view>
+    <view class="resume-restart" catchtap="restart">重新开始</view>
+  </view>
+
+  <view class="list-head">
+    <view class="list-title">训练动作</view>
+    <view class="list-count">共 {{ items.length }} 个</view>
+  </view>
+
+  <view wx:for="{{ items }}" wx:key="index" class="ex" data-id="{{ item.id }}" bindtap="open">
+    <image wx:if="{{ item.img }}" class="ex-thumb" src="{{ item.img }}" mode="aspectFit" />
+    <view wx:else class="ex-thumb ph">{{ item.muscle }}</view>
+
+    <view class="ex-main">
+      <view class="ex-top">
+        <view class="ex-name">{{ item.name }}</view>
+        <view class="ex-sets">{{ item.Sets }} 组</view>
+      </view>
+      <view wx:if="{{ item.meta }}" class="ex-sub">{{ item.meta }}</view>
+      <view class="ex-tags">
+        <view class="ex-pill">每 {{ item.Reps }} 次</view>
+        <view class="ex-pill">歇 {{ item.Rest }} 秒</view>
+        <view wx:if="{{ item.doneSets }}" class="ex-pill done">
+          已练 {{ item.doneSets }} / {{ item.Sets }} 组
+        </view>
+        <view wx:if="{{ item.current }}" class="ex-pill now">上次停在这</view>
+      </view>
+      <view class="ex-more">
+        <view class="ex-act" data-i="{{ index }}" catchtap="begin">从这开始</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{ !items.length }}" class="hint">
+    这一天还没有安排动作，去计划里加几个再开始。
+  </view>
+
+  <view class="list-foot">
+    点动作可先看一遍教学；想从中间某个动作开始，点它下面的「从这开始」。
+  </view>
+</view>
+
+<view wx:elif="{{ failed }}" class="page">
+  <view class="head">
+    <view class="head-focus">没读到这次训练</view>
+    <view class="head-meta">计划可能被改过，返回计划页重新选一天。</view>
+  </view>
+  <view class="bar">
+    <view class="bar-main" bindtap="back">返回计划</view>
+  </view>
+</view>
+
+<!-- 底部固定操作条，主按钮黑底白字 -->
+<view wx:if="{{ ready }}" class="bar">
+  <view class="bar-ghost" bindtap="back">返回计划</view>
+  <view wx:if="{{ items.length }}" class="bar-main" bindtap="start">
+    {{ resumable ? "继续训练" : "开始训练" }}
+  </view>
+  <view wx:else class="bar-main" bindtap="back">去加动作</view>
+</view>
