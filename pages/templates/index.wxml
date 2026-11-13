@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="title">推荐计划</view>
+  <view class="sub">挑一套照着练，启用后随时可以改。</view>
+
+  <view wx:if="{{ !ready }}" class="muted">加载中…</view>
+  <view wx:elif="{{ !list.length }}" class="muted">还没有可用的推荐计划，稍后再来看看。</view>
+
+  <view class="grid">
+    <view wx:for="{{ list }}" wx:key="ID" class="tpl" data-i="{{ index }}" bindtap="open">
+      <image
+        wx:if="{{ item.Cover }}"
+        class="cover"
+        src="{{ item.Cover }}"
+        mode="aspectFill"
+        lazy-load
+      />
+      <view wx:else class="cover blank"></view>
+      <view class="shade"></view>
+      <view class="name">{{ item.Name }}</view>
+    </view>
+  </view>
+</view>

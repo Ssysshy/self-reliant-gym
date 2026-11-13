@@ -1,0 +1,50 @@
+<view class="page">
+  <view wx:if="{{ failed }}" class="muted">这个模板已经不在了，回上一页换一个吧。</view>
+
+  <block wx:else>
+    <image wx:if="{{ cover }}" class="hero" src="{{ cover }}" mode="aspectFill" />
+    <view wx:else class="hero blank"></view>
+
+    <view class="name">{{ name }}</view>
+    <view class="meta">
+      <text wx:if="{{ minutes }}">约 {{ minutes }} 分钟</text>
+      <text wx:if="{{ minutes && level }}" class="sep">·</text>
+      <text wx:if="{{ level }}">{{ level }}</text>
+      <text wx:if="{{ level || minutes }}" class="sep">·</text>
+      <text>{{ schedule.length }} 个训练日</text>
+    </view>
+
+    <view wx:for="{{ blocks }}" wx:key="Title" class="panel">
+      <view class="sec-title">
+        <text class="bar"></text>
+        {{ item.Title }}
+      </view>
+      <view wx:if="{{ item.Text }}" class="sec-text">{{ item.Text }}</view>
+      <view wx:for="{{ item.Lines }}" wx:for-item="line" wx:key="*this" class="sec-line">
+        {{ line }}
+      </view>
+    </view>
+
+    <!-- 训练安排从计划的 Days 直接生成，改了模板这里跟着变，不用再维护一份文案 -->
+    <view class="panel">
+      <view class="sec-title">
+        <text class="bar"></text>
+        训练安排
+      </view>
+      <view wx:for="{{ schedule }}" wx:key="Weekday" class="sch">
+        <text class="sch-week">周{{ item.label }}</text>
+        <view class="grow">
+          <view class="sch-focus">{{ item.Focus }}</view>
+          <view class="sch-items">{{ item.preview }}</view>
+        </view>
+        <text class="sch-count">{{ item.count }} 动作</text>
+      </view>
+    </view>
+  </block>
+</view>
+
+<view wx:if="{{ !failed }}" class="dock">
+  <button class="primary" bindtap="enable" loading="{{ saving }}" disabled="{{ saving }}">
+    启用该模板
+  </button>
+</view>

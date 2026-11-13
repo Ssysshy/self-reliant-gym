@@ -1,6 +1,8 @@
 <view class="page">
   <view class="title">PRO 会员</view>
-  <view class="sub">开通后可智能生成训练计划。到期后已保存的计划仍可继续执行。</view>
+  <view class="sub">
+    开通后可智能生成训练计划，计划保存上限提升至 6 份。到期后已保存的计划仍可继续执行。
+  </view>
 
   <view class="status">
     <view class="status-head">

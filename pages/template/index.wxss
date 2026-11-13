@@ -1,0 +1,115 @@
+@import "../../styles/card.wxss";
+@import "../../styles/interactive.wxss";
+
+/* 底部固定按钮会盖住内容，给页面留出等高的下边距 */
+.page {
+  padding-bottom: 220rpx;
+}
+
+/* 头图：16:9 左右的横向裁切，缺图时退化成深色渐变 */
+.hero {
+  width: 100%;
+  height: 400rpx;
+  border-radius: 24rpx;
+  background: #23231f;
+}
+.blank {
+  background: linear-gradient(135deg, #2c2c28 0%, #4a4a44 55%, #23231f 100%);
+}
+.name {
+  font-size: 42rpx;
+  font-weight: 700;
+  line-height: 1.34;
+  margin: 34rpx 0 12rpx;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  color: #999;
+  font-size: 25rpx;
+}
+.sep {
+  margin: 0 12rpx;
+  color: #ccc;
+}
+
+/* 分段内容：标题前一根竖条，正文用浅灰，保证长段落读起来不刺眼 */
+.sec-title {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 18rpx;
+}
+.bar {
+  width: 6rpx;
+  height: 26rpx;
+  border-radius: 3rpx;
+  background: #191919;
+  margin-right: 14rpx;
+}
+.sec-text {
+  color: #555;
+  font-size: 27rpx;
+  line-height: 1.82;
+}
+.sec-line {
+  color: #555;
+  font-size: 27rpx;
+  line-height: 1.82;
+  margin-top: 6rpx;
+}
+
+/* 训练安排：一行一个训练日，动作名做单行省略，避免长动作名把行高撑乱 */
+.sch {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0ee;
+}
+.sch:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.sch-week {
+  flex: 0 0 64rpx;
+  color: #aaa;
+  font-size: 24rpx;
+}
+.sch-focus {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+.sch-items {
+  color: #b0b0ab;
+  font-size: 23rpx;
+  margin-top: 6rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.sch-count {
+  flex: 0 0 auto;
+  color: #c0c0bb;
+  font-size: 23rpx;
+}
+
+/* 底部操作条：贴在屏幕底，给全面屏留 safe-area */
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18rpx 54rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 1rpx solid #eee;
+}
+.dock button {
+  width: 100%;
+  margin: 0;
+  padding: 26rpx 0;
+  font-size: 30rpx;
+  font-weight: 600;
+}

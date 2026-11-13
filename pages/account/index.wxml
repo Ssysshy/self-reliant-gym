@@ -1,6 +1,16 @@
 <view class="page">
   <view class="title">记录与账户</view>
   <view class="sub">已提交的训练记录保存在当前微信账号下；当天进行中的进度只在这台手机。</view>
+
+  <!-- 用户编号：自增 ID 不直接露给用户，换成固定长度的编号；怎么用的说明放在反馈页 -->
+  <view class="code">
+    <view class="grow">
+      <view class="code-label">用户编号</view>
+      <view class="code-value">{{ code || "—" }}</view>
+    </view>
+    <text wx:if="{{ code }}" class="code-copy" bindtap="copy">复制</text>
+  </view>
+
   <view
     wx:for="{{ ['我的训练记录', '个人训练计划库', 'PRO 会员', '我的订单', '反馈', '服务协议', '隐私说明'] }}"
     wx:key="*this"

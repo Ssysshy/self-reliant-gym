@@ -8,4 +8,6 @@
       {{ line }}
     </view>
   </view>
+
+  <view class="foot">更新日期：{{ updated }}</view>
 </view>

@@ -22,3 +22,11 @@
   left: 4rpx;
   color: #b0b0ac;
 }
+
+/* 和服务协议同一套页脚：条款类页面都标更新日期 */
+.foot {
+  margin-top: 56rpx;
+  color: #a8a8a4;
+  font-size: 24rpx;
+  text-align: center;
+}

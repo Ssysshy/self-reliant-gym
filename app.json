@@ -4,6 +4,8 @@
     "pages/library/index",
     "pages/exercise/index",
     "pages/plans/index",
+    "pages/templates/index",
+    "pages/template/index",
     "pages/custom/index",
     "pages/preview/index",
     "pages/workout/index",

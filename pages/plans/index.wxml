@@ -65,15 +65,13 @@
       </view>
     </view>
 
-    <picker range="{{ templates }}" range-key="Name" bindchange="useTemplate">
-      <view class="card">
-        <view class="grow">
-          <view class="row-main">选择免费模板</view>
-          <view class="row-meta">从运营发布的周计划开始，再按自己情况改</view>
-        </view>
-        <text class="chev">›</text>
+    <view class="card" bindtap="browse">
+      <view class="grow">
+        <view class="row-main">从推荐计划开始</view>
+        <view class="row-meta">看完整套安排再决定，详情里可以直接启用</view>
       </view>
-    </picker>
+      <text class="chev">›</text>
+    </view>
 
     <view class="duo">
       <button class="ghost" bindtap="smart">PRO 智能生成</button>

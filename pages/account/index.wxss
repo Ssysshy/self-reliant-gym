@@ -1,3 +1,33 @@
 @import "../../styles/card.wxss";
 
-/* 记录与账户：设置项列表与展开面板复用卡片族样式，本页暂无专属样式 */
+/* 记录与账户：设置项列表复用卡片族样式；用户编号单独一块，放在列表上方 */
+
+/* 用户编号：一整行描边卡，编号用大字 + 字距，看着像编号而不是列表里的一个数。
+   用法说明不在这页，放在反馈页（用户真需要它的时候才看得见） */
+.code {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 24rpx 30rpx;
+  margin: 6rpx 0 26rpx;
+  background: #fff;
+}
+.code-label {
+  color: #888;
+  font-size: 24rpx;
+}
+.code-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  letter-spacing: 6rpx;
+  margin-top: 6rpx;
+}
+/* 「复制」比编号弱一档，不抢编号本身的注意力 */
+.code-copy {
+  color: #191919;
+  font-size: 26rpx;
+  padding: 8rpx 0 8rpx 20rpx;
+  border-bottom: 2rpx solid #191919;
+}

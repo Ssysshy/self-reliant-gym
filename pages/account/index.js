@@ -1,17 +1,23 @@
 const { request, report } = require("../../api");
 
 Page({
-  data: { member: "未开通" },
+  data: { member: "未开通", code: "" },
   async onShow() {
     try {
       const [u, summary] = await Promise.all([request("/me"), request("/training/summary")]);
       this.setData({
         summary,
+        // 用户编号：对外报给客服的标识，后端按 ID 算出来（见后端的 code.go）
+        code: u.Code || "",
         member: new Date(u.Expires) > new Date() ? u.Expires.slice(0, 10) + " 到期" : "未开通",
       });
     } catch (e) {
       report(e);
     }
+  },
+  // 编号要能贴到微信群或反馈里，点一下就复制
+  copy() {
+    if (this.data.code) wx.setClipboardData({ data: this.data.code });
   },
   open(e) {
     const section = e.currentTarget.dataset.v;

@@ -2,6 +2,11 @@
   "name": "self-reliant-gym",
   "private": true,
   "scripts": {
+    "build:dev": "node scripts/set-env.mjs dev",
+    "build:test": "node scripts/set-env.mjs test",
+    "build:prod": "node scripts/set-env.mjs prod",
+    "build:auto": "node scripts/set-env.mjs auto",
+    "env:status": "node scripts/set-env.mjs status",
     "format": "prettier --write \"**/*.{wxml,wxss,json}\" && prettier --write \"**/*.{wxml,wxss,json}\"",
     "format:check": "prettier --check \"**/*.{wxml,wxss,json}\"",
     "format:wxml": "prettier --write \"**/*.wxml\""

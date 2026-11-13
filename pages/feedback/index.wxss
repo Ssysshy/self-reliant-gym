@@ -9,6 +9,19 @@ button::after {
   border: none;
 }
 
+/* 用户编号：跟在说明后面，第一行给编号本身，第二行说明会自动带上，不用用户自己抄 */
+.who {
+  font-size: 26rpx;
+  color: #555;
+  letter-spacing: 1rpx;
+  margin: -30rpx 0 32rpx;
+}
+.who-note {
+  color: #aaa;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+
 /* 输入区做成一张描边卡，右下角带字数 */
 .box {
   border: 2rpx solid #e4e4e1;

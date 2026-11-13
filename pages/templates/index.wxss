@@ -1,0 +1,47 @@
+/* 推荐计划：两列封面网格，标题压在封面底部。
+   封面来自模板 meta 的 Cover（包内路径或 https 链接），取不到时退化成深色渐变块，
+   这样新模板还没配图也能正常显示，不会露出破图。 */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18rpx;
+}
+.tpl {
+  position: relative;
+  flex: 0 0 calc((100% - 18rpx) / 2);
+  height: 210rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  background: #23231f;
+}
+.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.blank {
+  background: linear-gradient(135deg, #2c2c28 0%, #4a4a44 55%, #23231f 100%);
+}
+/* 底部压暗，保证任意封面上的白字都读得清 */
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.28) 46%,
+    rgba(0, 0, 0, 0) 78%
+  );
+}
+.name {
+  position: absolute;
+  left: 18rpx;
+  right: 18rpx;
+  bottom: 14rpx;
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.32;
+  text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.55);
+}

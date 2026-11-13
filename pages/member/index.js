@@ -1,12 +1,5 @@
 const { request, report } = require("../../api");
 
-/* 套餐文案按天数匹配，后端新增天数时回落到通用描述 */
-const NOTES = {
-  7: "先体验全部会员功能",
-  30: "覆盖一个完整训练周期",
-  365: "全年不限次数生成",
-};
-
 Page({
   data: { ready: false, active: false, expire: "", products: [], paying: 0 },
   async onShow() {
@@ -23,7 +16,8 @@ Page({
         yuan: (p.Price / 100).toFixed(2).replace(/\.?0+$/, ""),
         per: (p.Price / 100 / p.Days).toFixed(2),
         unit: p.Price / 100 / p.Days,
-        note: NOTES[p.Days] || "会员有效期 " + p.Days + " 天",
+        // 档位与说明都由后台维护，运营改了不用发版；没填说明就回落到通用文案
+        note: p.Note || "会员有效期 " + p.Days + " 天",
         // 按钮文案在 JS 里算好，wxml 只叠一层「处理中」避免多层三元
         btn: !p.Enabled ? "暂未开放" : active ? "续费" : "开通",
       }));

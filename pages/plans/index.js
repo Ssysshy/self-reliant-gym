@@ -7,7 +7,6 @@ const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
 Page({
   data: {
     plans: [],
-    templates: [],
     smart: false,
     selectedDays: [],
     selectedGear: [],
@@ -24,10 +23,7 @@ Page({
   },
   async onLoad() {
     try {
-      const [templates, exercises] = await Promise.all([
-        request("/templates"),
-        request("/exercises"),
-      ]);
+      const exercises = await request("/exercises");
       const focuses = ["全身", ...new Set(exercises.map((x) => x.Muscle))];
       this.setData({
         // 可用器材按分类勾选（器械/杠铃/哑铃…），不按具体机型，否则选项会多到没法选
@@ -36,7 +32,6 @@ Page({
           on: false,
         })),
         focusOpts: focuses.map((v) => ({ v, on: v === "全身" })),
-        templates,
       });
     } catch (e) {
       report(e);
@@ -52,6 +47,8 @@ Page({
       ]);
       this.uid = user.ID;
       this.member = new Date(user.Expires) > new Date();
+      // 份数上限由后端 /me 下发（免费 1 份、会员 6 份），前端不写死，跟着会员配置走
+      this.limit = Number(user.PlanLimit) || (this.member ? 6 : 1);
       const today = new Date(Date.now() + 8 * 3600000);
       const start =
         Date.UTC(
@@ -110,9 +107,9 @@ Page({
       report(err);
     }
   },
-  // 模板只是起稿的底子：套用后进编辑页，改完保存才成为自己的一份
-  useTemplate(e) {
-    wx.navigateTo({ url: "/pages/custom/index?template=" + e.detail.value });
+  // 模板从「原生 picker 弹窗」改成独立页：封面卡片列表 + 详情，比一列文字好挑
+  browse() {
+    wx.navigateTo({ url: "/pages/templates/index" });
   },
   modify(e) {
     wx.navigateTo({ url: "/pages/custom/index?id=" + e.currentTarget.dataset.id });
@@ -145,6 +142,24 @@ Page({
       report(err);
     }
   },
+  // 份数到顶就在入口挡住：别让人排完一周、点保存时才被拒。
+  // 只约束「新建」，点「调整」改已有计划照常放行；返回 true 表示已经弹过提示。
+  blocked() {
+    const limit = this.limit || 1;
+    if (this.data.plans.length < limit) return false;
+    wx.showModal({
+      title: "已保存 " + limit + " 份计划",
+      content: this.member
+        ? "这是会员上限，删掉一份不用的再新建。"
+        : "免费版最多 1 份计划，开通会员可保存 6 份。",
+      confirmText: this.member ? "知道了" : "查看会员",
+      showCancel: !this.member,
+      success: (r) => {
+        if (r.confirm && !this.member) wx.navigateTo({ url: "/pages/member/index" });
+      },
+    });
+    return true;
+  },
   smart() {
     if (!this.member) {
       wx.showModal({
@@ -156,6 +171,7 @@ Page({
       });
       return;
     }
+    if (this.blocked()) return;
     this.setData({ smart: true });
   },
   cancel() {
@@ -217,6 +233,7 @@ Page({
   },
   // 自定义周计划是独立页，这一页只留入口
   edit() {
+    if (this.blocked()) return;
     wx.navigateTo({ url: "/pages/custom/index" });
   },
   // 进训练统一先过清单页，看清楚这次练什么再开始
