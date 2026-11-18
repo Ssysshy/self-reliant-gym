@@ -64,9 +64,14 @@ Page({
         this.encouraged = true;
         return;
       }
-      // 今天只有一条，第一次拿到就存下来：第二次弹窗直接用，不必再请求
+      // 每次都问一次接口：运营可能在当天手动换了「今日推送」，缓存只当断网时的兜底
       let card = sameDay ? mark.card : null;
-      if (!card) card = await request("/encouragements/today");
+      try {
+        card = (await request("/encouragements/today")) || null;
+      } catch (e) {
+        // 断网：当天有缓存就继续用，没有就下次进入再试（这一趟不记次数）
+        if (!card) return;
+      }
       if (!card || !card.Text) {
         // 后台一条都没配（或全停用），今天不用再问了
         this.encouraged = true;
@@ -77,7 +82,7 @@ Page({
       this.encouraged = true;
       this.setData({ encourage: card });
     } catch (e) {
-      // 网络失败不记次数，下次进入首页再试：一次超时不该吃掉今天的额度
+      // 意外错误同样不记次数，下次进入首页再试
     } finally {
       this.encouraging = false;
     }

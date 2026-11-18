@@ -1,6 +1,11 @@
 @import "../../styles/interactive.wxss";
 @import "../../styles/form.wxss";
 
+/**
+ * 训练执行页。整页只有两个体量：一张深色「当前组」卡片，和一条固定的底部动作条。
+ * 训练时手机离眼睛一两米，所以字号、触控区都比其他页大一号，其余信息一律让位。
+ */
+
 button {
   box-sizing: border-box;
   width: 100%;
@@ -9,19 +14,88 @@ button::after {
   border: none;
 }
 
-.head {
-  margin-bottom: 30rpx;
+/* 给固定底栏留出安全距离 */
+.page {
+  padding-bottom: calc(300rpx + env(safe-area-inset-bottom));
 }
-/* 训练页的视觉重心是「当前动作」，顶部部位名让位给小一号 */
-.head .title {
-  font-size: 36rpx;
-  font-weight: 600;
-  margin: 0 0 10rpx;
+
+/* ---------- 顶部：训练日 ---------- */
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24rpx;
 }
-.progress-note {
-  color: #999;
+.top-main {
+  flex: 1;
+  min-width: 0;
+}
+.eyebrow {
+  font-size: 22rpx;
+  letter-spacing: 2rpx;
+  color: #a3a39e;
+}
+.focus {
+  font-size: 42rpx;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -1rpx;
+  margin-top: 10rpx;
+}
+.end {
+  flex: none;
   font-size: 24rpx;
-  margin: 0 0 14rpx;
+  color: #8a8a86;
+  padding: 6rpx 0 6rpx 24rpx;
+}
+.end-on {
+  color: #171717;
+}
+
+/* ---------- 组数进度：一组一格 ---------- */
+.ticks {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  margin-top: 30rpx;
+  height: 20rpx;
+}
+.tick {
+  flex: 1;
+  height: 10rpx;
+  border-radius: 999rpx;
+  background: #eaeae7;
+}
+.t1 {
+  background: #171717;
+}
+/* 正在做的那一组：竖着长一点并轻微呼吸，不用颜色区分也能一眼认出 */
+.t2 {
+  background: #171717;
+  transform: scaleY(1.9);
+  animation: tick-breathe 1.8s ease-in-out infinite;
+}
+@keyframes tick-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.ticks-note {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #8a8a86;
+}
+.ticks-pct {
+  color: #171717;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .pending {
@@ -29,105 +103,322 @@ button::after {
   color: #191919;
   font-size: 25rpx;
   text-align: center;
-  padding: 20rpx;
-  border-radius: 16rpx;
-  margin-bottom: 24rpx;
+  padding: 22rpx;
+  border-radius: 18rpx;
+  margin-top: 26rpx;
 }
 
-/* 当前动作：一屏只突出一个 */
-.exercise {
-  margin: 10rpx 0 34rpx;
+/* ---------- 当前组：深色卡片 ---------- */
+.hero {
+  margin-top: 34rpx;
+  background: #171717;
+  border-radius: 34rpx;
+  padding: 30rpx 30rpx 26rpx;
 }
-.exercise-name {
-  font-size: 46rpx;
-  font-weight: 700;
-  line-height: 1.3;
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.pill {
-  display: inline-block;
-  margin-top: 16rpx;
-  background: #191919;
+.hero-step {
+  font-size: 22rpx;
+  letter-spacing: 1rpx;
+  color: rgba(255, 255, 255, 0.45);
+}
+.hero-set {
+  font-size: 22rpx;
   color: #fff;
-  font-size: 24rpx;
-  padding: 8rpx 22rpx;
+  background: rgba(255, 255, 255, 0.14);
+  padding: 8rpx 20rpx;
   border-radius: 999rpx;
 }
-
-.done {
-  padding: 40rpx 0 10rpx;
-}
-.done-title {
-  font-size: 40rpx;
+.hero-name {
+  font-size: 54rpx;
   font-weight: 700;
-  margin-bottom: 12rpx;
+  line-height: 1.26;
+  letter-spacing: -1rpx;
+  color: #fff;
+  margin: 24rpx 0 30rpx;
 }
 
-.finish {
-  margin-top: 44rpx;
+/* 次数：一屏最大的数字，两侧留出拇指按得准的圆钮 */
+.reps {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.reps-btn {
+  flex: none;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 42rpx;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reps-btn-on {
+  background: rgba(255, 255, 255, 0.24);
+}
+/* 数字用透明底 + 纯白字，盖掉 app.wxss 里 input 的浅灰块 */
+.reps-input {
+  flex: 1;
+  min-width: 0;
+  height: 104rpx;
+  min-height: 104rpx;
+  padding: 0;
+  background: transparent;
+  color: #fff;
   text-align: center;
-  color: #888;
+  font-size: 84rpx;
+  font-weight: 700;
+  line-height: 104rpx;
+  letter-spacing: -2rpx;
+}
+.hero-foot {
+  margin-top: 22rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+/* ---------- 重量 / 休息：一张双行面板 ---------- */
+.panel {
+  margin-top: 22rpx;
+  border: 2rpx solid #e8e8e5;
+  border-radius: 28rpx;
+  padding: 2rpx 28rpx;
+  background: #fff;
+}
+.prow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 26rpx 0;
+}
+.prow-col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.prow-main {
+  min-width: 0;
+}
+.prow-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #191919;
+}
+.prow-note {
+  font-size: 22rpx;
+  color: #a3a39e;
+  margin-top: 6rpx;
+}
+.prow-field {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+.weight {
+  width: 170rpx;
+  height: 64rpx;
+  min-height: 64rpx;
+  padding: 0;
+  background: transparent;
+  text-align: right;
+  font-size: 42rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+}
+.weight-unit {
+  font-size: 24rpx;
+  color: #a3a39e;
+}
+.pdiv {
+  height: 1rpx;
+  background: #f1f1ee;
+}
+.prow-col .seg {
+  margin-top: 18rpx;
+}
+.seg-item {
+  padding: 22rpx 0;
+  border-radius: 16rpx;
   font-size: 26rpx;
-  padding: 24rpx;
+}
+
+/* ---------- 接下来 ---------- */
+.upnext {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-top: 26rpx;
+  padding: 0 6rpx;
+}
+.upnext-label {
+  flex: none;
+  font-size: 22rpx;
+  letter-spacing: 1rpx;
+  color: #a3a39e;
+}
+.upnext-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  color: #4a4a46;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.upnext-meta {
+  flex: none;
+  font-size: 22rpx;
+  color: #a3a39e;
+}
+
+/* ---------- 固定底栏 ---------- */
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding: 18rpx 54rpx calc(22rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.96);
   border-top: 1rpx solid #f0f0ee;
 }
+.dock-btn {
+  height: 104rpx;
+  border-radius: 26rpx;
+  background: #171717;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dock-btn-on {
+  background: #3a3a38;
+}
+.dock-skip {
+  text-align: center;
+  font-size: 23rpx;
+  color: #8a8a86;
+  padding: 20rpx 0 2rpx;
+}
 
-/* 组间休息弹窗：盖在训练页上，倒计时环是唯一重心。
-   环用 conic-gradient 画（内核不支持时退化成浅灰整圆，不影响读数）。 */
-.rest-mask {
+/* ---------- 收场 ---------- */
+.done {
+  padding: 72rpx 0 0;
+  text-align: center;
+}
+.done-mark {
+  width: 116rpx;
+  height: 116rpx;
+  border-radius: 50%;
+  background: #171717;
+  color: #fff;
+  font-size: 58rpx;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30rpx;
+}
+.done-title {
+  font-size: 46rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+}
+.done-sub {
+  color: #8a8a86;
+  font-size: 25rpx;
+  margin-top: 14rpx;
+}
+.done-btn {
+  margin: 56rpx 0 0;
+  height: 104rpx;
+  border-radius: 26rpx;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 组间休息：整屏压暗 ----------
+   环用 conic-gradient 画；内核不支持时退化成整圈浅色，读数不受影响。 */
+.rest {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
   z-index: 20;
-  background: rgba(25, 25, 25, 0.38);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 48rpx;
+  flex-direction: column;
+  padding: 36rpx 54rpx calc(40rpx + env(safe-area-inset-bottom));
+  background: #121212;
+  animation: rest-in 0.2s ease-out;
 }
-.rest-card {
-  width: 100%;
-  background: #fff;
-  border-radius: 28rpx;
-  padding: 34rpx 36rpx 24rpx;
-  box-sizing: border-box;
+@keyframes rest-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .rest-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.rest-title {
-  font-size: 30rpx;
-  font-weight: 600;
+.rest-eyebrow {
+  font-size: 24rpx;
+  letter-spacing: 3rpx;
+  color: rgba(255, 255, 255, 0.5);
 }
 .rest-fold {
-  color: #999;
   font-size: 24rpx;
-  padding: 8rpx 0 8rpx 16rpx;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 8rpx 0 8rpx 24rpx;
 }
-.ring {
-  width: 336rpx;
-  height: 336rpx;
-  border-radius: 50%;
-  margin: 30rpx auto 26rpx;
+.rest-fold-on {
+  color: #fff;
+}
+
+.ring-wrap {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 兜底色：万一内核不支持 conic-gradient，也还是一圈浅灰，不影响读秒 */
-  background: #ecece9;
+  min-height: 0;
+}
+.ring {
+  width: 460rpx;
+  height: 460rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
 }
 .ring-in {
   position: relative;
-  width: 278rpx;
-  height: 278rpx;
+  width: 394rpx;
+  height: 394rpx;
   border-radius: 50%;
-  background: #fff;
+  background: #0e0e0e;
 }
-/* 数字用「绝对定位 + translate」居中，不靠 flex 基线对齐：
-   基线对齐会把整行按基线摆，行高一大数字就浮到中心上方。
-   line-height 收紧到 1，让盒子高度等于字高，居中才是视觉居中。 */
+/* 数字用「绝对定位 + translate」居中：flex 基线对齐会把整行按基线摆，
+   行高一大大数字就浮到中心上方。line-height 收到 1，盒子高度才等于字高。 */
 .ring-clock {
   position: absolute;
   left: 50%;
@@ -137,28 +428,30 @@ button::after {
   white-space: nowrap;
 }
 .ring-num {
-  font-size: 96rpx;
+  font-size: 148rpx;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -3rpx;
+  color: #fff;
+  letter-spacing: -5rpx;
+  font-variant-numeric: tabular-nums;
 }
-/* 「秒」挂在数字右侧、贴基线下沿，不参与数字的居中计算 */
 .ring-unit {
   position: absolute;
   left: 100%;
-  bottom: 10rpx;
-  margin-left: 8rpx;
-  color: #999;
+  bottom: 20rpx;
+  margin-left: 10rpx;
+  color: rgba(255, 255, 255, 0.38);
   font-size: 26rpx;
   line-height: 1;
 }
+
 .next {
-  background: #f6f6f4;
-  border-radius: 18rpx;
-  padding: 20rpx 24rpx;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
 }
 .next-label {
-  color: #999;
+  color: rgba(255, 255, 255, 0.42);
   font-size: 22rpx;
 }
 .next-main {
@@ -166,75 +459,96 @@ button::after {
   align-items: baseline;
   justify-content: space-between;
   gap: 16rpx;
-  margin-top: 8rpx;
+  margin-top: 10rpx;
 }
 /* 动作名吃掉剩余宽度并按需换行，右侧组数次数不跟着被挤 */
 .next-name {
   flex: 1;
-  font-size: 30rpx;
+  color: #fff;
+  font-size: 32rpx;
   font-weight: 600;
   line-height: 1.35;
 }
 .next-meta {
-  color: #777;
-  font-size: 23rpx;
   flex: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 23rpx;
 }
 .next-last {
   display: block;
-  color: #999;
+  color: rgba(255, 255, 255, 0.42);
   font-size: 22rpx;
   margin-top: 8rpx;
 }
-.rest-primary {
-  margin: 24rpx 0 0;
-}
-.rest-acts {
+
+.rest-shift {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 44rpx;
+  gap: 16rpx;
+  margin-top: 22rpx;
+}
+.shift-btn {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: 20rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 26rpx;
+}
+.rest-skip {
   margin-top: 16rpx;
+  padding: 30rpx 0;
+  border-radius: 24rpx;
+  background: #fff;
+  color: #141414;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
 }
-.rest-act {
-  color: #888;
-  font-size: 25rpx;
-  padding: 10rpx 4rpx;
+.rest-skip-on {
+  background: #dededb;
 }
+.rest-game {
+  text-align: center;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 24rpx 0 2rpx;
+}
+
 .game {
   display: flex;
   align-items: center;
-  background: #f4f4f2;
-  border-radius: 16rpx;
-  height: 96rpx;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 18rpx;
+  height: 92rpx;
   margin-top: 14rpx;
-  padding-right: 20rpx;
+  padding-right: 22rpx;
 }
 .game-dot {
-  width: 76rpx;
-  height: 76rpx;
+  width: 70rpx;
+  height: 70rpx;
   border-radius: 50%;
-  background: #191919;
-  color: #fff;
+  background: #fff;
+  color: #141414;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20rpx;
+  font-size: 18rpx;
 }
 .game-note {
   margin-left: auto;
-  color: #999;
+  color: rgba(255, 255, 255, 0.45);
   font-size: 22rpx;
 }
 
-/* 收起后的一条：贴在底部，点一下回到弹窗 */
+/* 收起后的一条：贴在底部，点一下回到整屏 */
 .rest-bar {
   position: fixed;
   left: 32rpx;
   right: 32rpx;
-  bottom: 34rpx;
+  bottom: calc(34rpx + env(safe-area-inset-bottom));
   z-index: 20;
-  background: #191919;
+  background: #171717;
   color: #fff;
   border-radius: 999rpx;
   padding: 22rpx 34rpx;
@@ -244,14 +558,14 @@ button::after {
   gap: 20rpx;
 }
 .rest-bar-left {
+  flex: none;
   font-size: 27rpx;
   font-weight: 600;
-  flex: none;
 }
 .rest-bar-hint {
+  flex: 1;
   color: rgba(255, 255, 255, 0.62);
   font-size: 23rpx;
-  flex: 1;
   text-align: right;
   overflow: hidden;
   white-space: nowrap;

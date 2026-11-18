@@ -11,6 +11,11 @@ Page({
     completed: 0,
     percent: 0,
     item: null,
+    // 当前是第几个动作 / 一共几个动作，让用户知道还剩多远
+    step: 1,
+    steps: 0,
+    // 每组一格：0 未做、1 已完成、2 正在做
+    ticks: [],
     group: 1,
     reps: 0,
     weight: "",
@@ -111,18 +116,49 @@ Page({
     const completed = p.Done.filter((n) => n > 0).length;
     const block =
       this.blocks.find((b) => p.Cursor >= b.start && p.Cursor < b.start + b.sets) || null;
+
+    // 换动作时清掉上一动作的重量，再从本动作已经记过的组里找回一个值接着用
+    const start = block ? block.start : -1;
+    const changed = start !== this.blockStart;
+    this.blockStart = start;
+    const kept = !changed && this.data.weight !== "" ? this.data.weight : "";
+    const prev = block ? this.prevWeight(block, p.Cursor) : null;
+
     this.setData({
       ready: true,
       focus: p.Focus,
       total,
       completed,
       percent: total ? Math.round((completed / total) * 100) : 0,
+      ticks: p.Done.map((n, i) => ({ i, s: n > 0 ? 1 : i === p.Cursor ? 2 : 0 })),
       item: block ? block.item : null,
+      step: block ? this.blocks.indexOf(block) + 1 : this.blocks.length,
+      steps: this.blocks.length,
       group: block ? p.Cursor - block.start + 1 : 1,
       reps: block ? block.item.Reps : 0,
       rest: block ? block.item.Rest : 60,
+      weight: kept || (prev === null || prev === undefined ? "" : String(prev)),
+      upNext: this.upcomingExercise(block),
       next: this.upcoming(),
     });
+  },
+
+  // 本动作里最近一次记过的重量：续练或重新进页面时，重量不用重填
+  prevWeight(block, cursor) {
+    const weights = this.progress.Weights || [];
+    for (let i = Math.min(cursor, block.start + block.sets) - 1; i >= block.start; i--) {
+      const w = weights[i];
+      if (w !== null && w !== undefined) return w;
+    }
+    return null;
+  },
+
+  // 当前动作之后还有哪个动作：换器械前心里有数
+  upcomingExercise(block) {
+    if (!block) return null;
+    const i = this.blocks.indexOf(block);
+    const nb = this.blocks[i + 1];
+    return nb ? { Name: nb.item.Name, Left: nb.sets } : null;
   },
 
   // 下一组的信息：动作名、第几组、做几次。换动作时要单独提示「下一个动作」，
@@ -215,6 +251,7 @@ Page({
         }
       }
       wx.setStorageSync(this.storeKey, p);
+      if (!skip) wx.vibrateShort({ type: "light" });
       this.render();
       if (p.Cursor >= p.Done.length) return this.submit();
       this.tick();
