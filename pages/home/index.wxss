@@ -38,3 +38,74 @@
   overflow: auto;
   box-sizing: border-box;
 }
+
+/* 首页：鼓励弹窗。做成一张「语录卡」——引号压在第一行文字上方，
+   文案是页面里最大的字，落款退到右下角，整体只用黑白灰，和全站一致。 */
+.enc-mask {
+  position: fixed;
+  inset: 0;
+  background: #00000066;
+  display: flex;
+  align-items: center;
+  padding: 72rpx 54rpx;
+  z-index: 9;
+  animation: enc-fade 0.18s ease-out;
+}
+.enc-card {
+  width: 100%;
+  background: #fff;
+  border-radius: 36rpx;
+  padding: 60rpx 48rpx 40rpx;
+  box-sizing: border-box;
+  animation: enc-pop 0.22s ease-out;
+}
+.enc-quote {
+  height: 56rpx;
+  font-size: 104rpx;
+  line-height: 0.72;
+  color: #e4e4e1;
+  font-family: Georgia, "Times New Roman", serif;
+}
+.enc-text {
+  font-size: 42rpx;
+  line-height: 1.66;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  margin: 8rpx 0 24rpx;
+}
+.enc-author {
+  text-align: right;
+  color: #999;
+  font-size: 26rpx;
+}
+.enc-btn {
+  margin-top: 48rpx;
+  background: #191919;
+  color: #fff;
+  font-size: 30rpx;
+  text-align: center;
+  padding: 26rpx 0;
+  border-radius: 20rpx;
+}
+.enc-btn-on {
+  background: #3a3a38;
+}
+
+@keyframes enc-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes enc-pop {
+  from {
+    opacity: 0;
+    transform: translateY(24rpx) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

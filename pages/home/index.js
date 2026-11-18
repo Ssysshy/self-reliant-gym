@@ -9,10 +9,31 @@ const HOME_ENTRIES = [
   { label: "记录与账户", icon: "◍", desc: "回看记录与会员", on: true },
 ];
 
+// 首页鼓励弹窗：后台每天定一条「今日推送」，这里只取这一条，每天最多弹两次。
+// 本地只记「今天弹了几次、今天这条是什么」，换一天自动从头算；两次用完当天不再打扰。
+const ENCOURAGE_KEY = "encouragement";
+const ENCOURAGE_TIMES = 2;
+
+// 「今天」按北京时间算，和 utils/time.js 的展示口径一致：
+// 手机时区乱改也不该让同一个自然日里多弹两次。
+function today() {
+  const d = new Date(Date.now() + 8 * 3600000);
+  const p = (n) => String(n).padStart(2, "0");
+  return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate());
+}
+
+// 引导跳去别的页面（如「训练老炮」直通自定义计划）后不该再往首页上盖弹窗
+function onHome() {
+  const pages = getCurrentPages();
+  const top = pages[pages.length - 1];
+  return !top || top.route === "pages/home/index";
+}
+
 Page({
   data: {
     entries: HOME_ENTRIES.filter((e) => e.on),
     stage: "",
+    encourage: null,
     experience: "",
     templates: [],
     frequency: 2,
@@ -22,9 +43,50 @@ Page({
     matches: [],
     plan: null,
   },
-  onShow() {
-    if (wx.getStorageSync("token")) this.inspect().catch(report);
+  async onShow() {
+    // 先走引导（没设经验/没计划的人），再弹鼓励语：两层遮罩叠在一起没法操作
+    if (wx.getStorageSync("token")) await this.inspect().catch(report);
+    await this.encourage();
   },
+  // 鼓励弹窗：取后台今天的这一条，次数与日期落在本地。
+  // 同一次停留只尝试一次 —— 从二级页返回首页也会触发 onShow，不该把两次额度连着用掉。
+  async encourage() {
+    if (this.encouraging || this.encouraged) return;
+    // 新手引导正占着屏、或已经跳去别的页面，先不弹；关掉引导后由 close() 补一次
+    if (this.data.stage || !onHome()) return;
+    this.encouraging = true;
+    try {
+      const date = today();
+      const mark = wx.getStorageSync(ENCOURAGE_KEY) || {};
+      const sameDay = mark.date === date;
+      const used = sameDay ? Number(mark.count) || 0 : 0;
+      if (used >= ENCOURAGE_TIMES) {
+        this.encouraged = true;
+        return;
+      }
+      // 今天只有一条，第一次拿到就存下来：第二次弹窗直接用，不必再请求
+      let card = sameDay ? mark.card : null;
+      if (!card) card = await request("/encouragements/today");
+      if (!card || !card.Text) {
+        // 后台一条都没配（或全停用），今天不用再问了
+        this.encouraged = true;
+        return;
+      }
+      // 先记次数再展示：展示后被强杀，下次进入也不会把这次额度省掉
+      wx.setStorageSync(ENCOURAGE_KEY, { date, count: used + 1, card });
+      this.encouraged = true;
+      this.setData({ encourage: card });
+    } catch (e) {
+      // 网络失败不记次数，下次进入首页再试：一次超时不该吃掉今天的额度
+    } finally {
+      this.encouraging = false;
+    }
+  },
+  closeEncourage() {
+    this.setData({ encourage: null });
+  },
+  // 卡片自己吞掉点击，避免点文案时穿透到遮罩把弹窗关掉
+  noop() {},
   async inspect() {
     const u = await request("/me");
     this.user = u;
@@ -142,6 +204,8 @@ Page({
   close() {
     this.dismissed = true;
     this.setData({ stage: "" });
+    // 引导关掉后补一次鼓励弹窗：刚才是它占着屏才没弹
+    this.encourage();
   },
   async adopt(e) {
     if (this.busy) return;
@@ -168,7 +232,9 @@ Page({
     }
   },
   start() {
-    this.close();
+    // 这里直接收引导、不走 close()：马上要跳去开练页，不该再叠一个鼓励弹窗
+    this.dismissed = true;
+    this.setData({ stage: "" });
     wx.navigateTo({ url: "/pages/preview/index?id=" + this.data.plan.ID });
   },
 });

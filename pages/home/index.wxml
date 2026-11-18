@@ -77,3 +77,11 @@
     <view class="foot" bindtap="close">暂时关闭</view>
   </view>
 </view>
+<view wx:if="{{ encourage }}" class="enc-mask" bindtap="closeEncourage">
+  <view class="enc-card" catchtap="noop">
+    <view class="enc-quote">“</view>
+    <view class="enc-text">{{ encourage.Text }}</view>
+    <view wx:if="{{ encourage.Author }}" class="enc-author">—— {{ encourage.Author }}</view>
+    <view class="enc-btn" hover-class="enc-btn-on" bindtap="closeEncourage">收到</view>
+  </view>
+</view>

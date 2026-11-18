@@ -20,7 +20,7 @@
 // 发版就会让线上指向内网——真上线了才发现接口连不上，是最难查的一类事故。
 //
 // 下面这行由 scripts/set-env.mjs 改写，手改会被下次命令覆盖。
-const ACTIVE_ENV = ""; // dev | test | prod | 空 = 按版本自动
+const ACTIVE_ENV = "dev"; // dev | test | prod | 空 = 按版本自动
 
 const PORT = 18080;
 
