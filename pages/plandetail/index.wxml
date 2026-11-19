@@ -1,0 +1,33 @@
+<view class="page">
+  <view wx:if="{{ failed }}" class="muted">这份计划已经不在了，回上一页看看。</view>
+
+  <block wx:else>
+    <view class="name">{{ name }}</view>
+    <view class="meta">{{ trainingDays }} 个训练日 · 共 {{ totalItems }} 个动作</view>
+
+    <!-- 整周七天都列出来：休息日也占一行，练的人一眼知道哪天不用来 -->
+    <view
+      wx:for="{{ days }}"
+      wx:key="Weekday"
+      class="day {{ item.rest ? 'rest' : '' }}"
+      data-day="{{ item.rest ? 0 : item.Weekday }}"
+      bindtap="open"
+    >
+      <view class="day-top">
+        <text class="day-week">周{{ item.label }}</text>
+        <text class="day-focus">{{ item.Focus }}</text>
+        <text wx:if="{{ !item.rest }}" class="day-count">{{ item.count }} 动作</text>
+        <text wx:if="{{ !item.rest }}" class="chev">›</text>
+      </view>
+      <view wx:if="{{ !item.rest }}" class="items">
+        <view wx:for="{{ item.items }}" wx:for-item="it" wx:key="key" class="line">
+          <text class="line-name">{{ it.Name }}</text>
+          <text class="line-sets">{{ it.Sets }} × {{ it.Reps }}</text>
+          <text class="line-rest">{{ it.Rest }}s</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="ghost" bindtap="modify">调整这份计划</button>
+  </block>
+</view>

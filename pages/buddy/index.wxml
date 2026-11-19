@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="title">健身搭子</view>
+  <view class="sub">挑一个最对胃口的，回首页点一下他，会跟你说句话。</view>
+
+  <view wx:if="{{ !ready }}" class="muted">加载中…</view>
+  <view wx:elif="{{ !list.length }}" class="muted">后台还没上架搭子，过会儿再来看看。</view>
+
+  <view class="grid">
+    <view
+      wx:for="{{ list }}"
+      wx:key="ID"
+      class="pick {{ item.ID === current ? 'on' : '' }}"
+      data-i="{{ index }}"
+      bindtap="select"
+    >
+      <image class="pic" src="{{ item.ImageURL }}" mode="aspectFill" />
+      <view wx:if="{{ item.ID === current }}" class="check">✓</view>
+      <view wx:if="{{ item.Name }}" class="name">{{ item.Name }}</view>
+    </view>
+  </view>
+</view>

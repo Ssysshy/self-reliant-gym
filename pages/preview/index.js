@@ -1,4 +1,5 @@
 const { request, report } = require("../../api");
+const { img } = require("../../utils/image");
 
 // 开练前的清单页：只读 /sessions/preview，不写本地进度。
 // 本地进度仍然由 pages/workout 创建，这里只读来判断「继续」还是「开始」。
@@ -56,7 +57,7 @@ Page({
           Sets: it.Sets,
           Reps: it.Reps,
           Rest: it.Rest,
-          img: ex ? ex.ImageURL : "",
+          img: ex ? img(ex.ImageURL) : "",
           muscle: ex ? ex.Muscle : "",
           meta: [ex && ex.SubMuscle, ex && ex.Category].filter(Boolean).join(" · "),
           doneSets: hit,

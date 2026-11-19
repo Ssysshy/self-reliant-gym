@@ -1,4 +1,5 @@
 const { request, report } = require("../../api");
+const { img } = require("../../utils/image");
 
 // 推荐计划列表：两列封面卡片，点进详情再决定要不要启用。
 // 数据走 /templates（后端只下发 owner=0 且 published 的模板），封面等信息在 meta 里。
@@ -12,7 +13,11 @@ Page({
   async onShow() {
     try {
       const list = await request("/templates");
-      this.setData({ list, ready: true });
+      // 封面在 meta 里存相对路径，这里提到顶层 Cover 上再拼 CDN 前缀，wxml 只认 item.Cover
+      this.setData({
+        list: list.map((t) => ({ ...t, Cover: img(t.Meta && t.Meta.Cover) })),
+        ready: true,
+      });
     } catch (e) {
       this.setData({ ready: true });
       report(e);

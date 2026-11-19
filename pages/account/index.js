@@ -26,6 +26,7 @@ Page({
       个人训练计划库: "/pages/plans/index",
       "PRO 会员": "/pages/member/index",
       我的订单: "/pages/orders/index",
+      健身搭子: "/pages/buddy/index",
       反馈: "/pages/feedback/index",
       服务协议: "/pages/agreement/index",
       隐私说明: "/pages/privacy/index",

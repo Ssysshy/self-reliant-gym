@@ -1,0 +1,48 @@
+/* 挑搭子：三列竖图（3:4，和首页 432×576 的展示位同比例），选中的描黑边打勾。 */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.pick {
+  position: relative;
+  flex: 0 0 calc((100% - 24rpx) / 3);
+  height: 275rpx;
+  border-radius: 18rpx;
+  overflow: hidden;
+  background: #f4f4f2;
+  border: 4rpx solid transparent;
+  box-sizing: border-box;
+}
+.pick.on {
+  border-color: #191919;
+}
+.pic {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.check {
+  position: absolute;
+  right: 8rpx;
+  top: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 999rpx;
+  background: #191919;
+  color: #fff;
+  font-size: 24rpx;
+  line-height: 40rpx;
+  text-align: center;
+}
+.name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 28rpx 12rpx 10rpx;
+  color: #fff;
+  font-size: 22rpx;
+  line-height: 1.3;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0) 100%);
+}

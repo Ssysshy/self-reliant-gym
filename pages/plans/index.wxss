@@ -11,15 +11,17 @@ button::after {
   border: none;
 }
 
-/* 本周进度：七个格子，练过的是实心，今天是描边 */
+/* 星期选择器：点一下切下面的内容。
+   选中 = 实心黑；今天 = 描边；本周练过 = 底下一个小点；没安排的那天文字更浅。 */
 .week {
   display: flex;
   gap: 10rpx;
   margin-top: 10rpx;
 }
 .week-day {
+  position: relative;
   flex: 1;
-  height: 64rpx;
+  height: 76rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,17 +30,34 @@ button::after {
   border-radius: 14rpx;
   font-size: 26rpx;
   border: 2rpx solid transparent;
+  box-sizing: border-box;
 }
-.week-day.done {
-  background: #191919;
-  color: #fff;
+/* 有训练安排的那天：字是实的，看得出「这天要练」 */
+.week-day.has {
+  color: #191919;
 }
 .week-day.today {
   border-color: #191919;
-  color: #191919;
 }
-.week-day.done.today {
+.week-day.sel {
+  background: #191919;
   color: #fff;
+  border-color: #191919;
+  font-weight: 600;
+}
+/* 本周已练过：一个小点，选中时反白 */
+.dot {
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  width: 8rpx;
+  height: 8rpx;
+  margin-left: -4rpx;
+  border-radius: 50%;
+  background: #191919;
+}
+.dot.on {
+  background: #fff;
 }
 .week-note {
   color: #999;
@@ -89,7 +108,7 @@ button::after {
   font-size: 24rpx;
 }
 
-/* 计划卡：标题 + 训练日行 + 两个操作 */
+/* 当前计划卡：标题行 + 选中那天的安排 + 主按钮 */
 .plan {
   border: 2rpx solid #e4e4e1;
   border-radius: 24rpx;
@@ -100,11 +119,22 @@ button::after {
 .plan-head {
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  gap: 12rpx;
+}
+/* 名字整块可点（去详情页），窄屏时省略而不是挤掉右边的操作 */
+.plan-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
 }
 .plan-name {
-  flex: 1;
-  font-size: 34rpx;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 32rpx;
   font-weight: 600;
 }
 .badge {
@@ -113,56 +143,78 @@ button::after {
   font-size: 22rpx;
   padding: 4rpx 14rpx;
   border-radius: 999rpx;
-}
-/* 非当前计划：平时不用，要一眼看出没在用 */
-.badge.off {
-  background: #f4f4f2;
-  color: #999;
+  flex: none;
 }
 /* 「调整」是次要入口，挂在计划名右侧，不占主按钮的位置 */
 .plan-adjust {
   color: #888;
-  font-size: 26rpx;
+  font-size: 24rpx;
   padding: 8rpx 0 8rpx 4rpx;
   flex: none;
 }
 /* 「删除」比「调整」更弱但要能看见：浅一档的灰，靠确认弹窗兜住误触 */
 .plan-del {
   color: #a8a8a4;
-  font-size: 26rpx;
+  font-size: 24rpx;
   padding: 8rpx 0 8rpx 4rpx;
   flex: none;
 }
-.days {
-  margin: 6rpx 0 22rpx;
-}
-.day-row {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  padding: 24rpx 0;
+
+/* 选中那天的概览 */
+.day-head {
+  margin-top: 26rpx;
+  padding-top: 24rpx;
   border-top: 1rpx solid #f0f0ee;
 }
-.day-row:first-child {
-  border-top: 0;
-  padding-top: 16rpx;
-}
-.day-week {
-  width: 92rpx;
-  color: #888;
-  font-size: 26rpx;
-}
 .day-focus {
-  font-size: 30rpx;
-  font-weight: 500;
+  font-size: 32rpx;
+  font-weight: 600;
 }
-.day-count {
-  color: #aaa;
+.day-meta {
+  color: #999;
   font-size: 24rpx;
+  margin-top: 8rpx;
+  line-height: 1.5;
 }
+
+/* 动作清单：一行一个，右侧是组次与休息 */
+.items {
+  margin-top: 18rpx;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 20rpx 0;
+  border-top: 1rpx solid #f4f4f2;
+}
+.item-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 29rpx;
+}
+.item-sets {
+  color: #666;
+  font-size: 26rpx;
+  flex: none;
+}
+.item-rest {
+  color: #b0b0ac;
+  font-size: 24rpx;
+  width: 62rpx;
+  text-align: right;
+  flex: none;
+}
+.item .chev {
+  font-size: 30rpx;
+}
+
 /* 主按钮独占一行；次要的「调整」已移到计划名右侧 */
 .plan-actions {
-  margin-top: 20rpx;
+  margin-top: 22rpx;
 }
 .plan-actions button {
   display: flex;
@@ -176,6 +228,24 @@ button::after {
   border-radius: 18rpx;
   font-size: 30rpx;
   font-weight: 600;
+}
+
+/* 多份计划时的切换入口：一行低调的文字，不抢主按钮 */
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 22rpx 6rpx;
+  margin-bottom: 6rpx;
+}
+.switch-label {
+  font-size: 28rpx;
+  color: #191919;
+}
+.switch-sub {
+  flex: 1;
+  font-size: 24rpx;
+  color: #aaa;
 }
 
 /* 底部两个次要入口并排 */

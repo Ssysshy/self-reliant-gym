@@ -1,0 +1,101 @@
+@import "../../styles/card.wxss";
+
+/* 计划详情：一份计划的整周安排。标题是计划名，可能很长，允许换行 */
+.name {
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 24rpx 0 10rpx;
+}
+.meta {
+  color: #999;
+  font-size: 24rpx;
+  margin-bottom: 34rpx;
+}
+
+/* 一天一张卡：周几 + 主题 + 动作数，下面是这一天的动作与组次 */
+.day {
+  border: 2rpx solid #e4e4e1;
+  border-radius: 24rpx;
+  padding: 26rpx 28rpx;
+  margin-bottom: 18rpx;
+  background: #fff;
+}
+/* 休息日：虚线 + 浅字，和训练日区分开 */
+.day.rest {
+  border-style: dashed;
+  border-color: #eaeae7;
+}
+.day-top {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.day-week {
+  width: 76rpx;
+  flex: none;
+  color: #888;
+  font-size: 26rpx;
+}
+.day-focus {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.day.rest .day-focus {
+  font-weight: 400;
+  color: #b0b0ac;
+}
+.day-count {
+  color: #aaa;
+  font-size: 24rpx;
+  flex: none;
+}
+
+/* 动作明细缩进到主题下面，和「周X」错开 */
+.items {
+  margin-top: 14rpx;
+  padding-left: 92rpx;
+}
+.line {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  padding: 12rpx 0;
+  border-top: 1rpx solid #f4f4f2;
+}
+.line:first-child {
+  border-top: 0;
+}
+.line-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 28rpx;
+}
+.line-sets {
+  color: #666;
+  font-size: 26rpx;
+  flex: none;
+}
+.line-rest {
+  width: 62rpx;
+  text-align: right;
+  color: #b0b0ac;
+  font-size: 24rpx;
+  flex: none;
+}
+
+button {
+  width: 100%;
+  margin-top: 28rpx;
+}
+button::after {
+  border: none;
+}

@@ -98,3 +98,18 @@ pages/<page>/index.wxss     页面专属样式，按需 @import 上面的片段
 
 其余二级页（含 `pages/agreement` 服务协议）也是系统导航栏 + `.page` 白底排版，标题用 `.title`，
 条款用 `.block-title` + `.block-line`（圆点前缀），和「隐私说明」保持一致。
+
+## 健身搭子（utils/buddy + pages/buddy）
+
+首页右下角固定一张 432×576 的人物图（右下角贴边，不留白边；点一下只冒气泡，人物不动），点一下在上方冒一句台词，四秒后自动收起。人物和台词由后台
+「健身搭子」维护（`/api/v1/buddies`，只下发启用的），用户可以挑一个收藏，入口在账户页。
+
+- 本地只用一个 key：`wx.setStorageSync("buddy", { id, list, at })`。`id` 是挑中的那个，`list` 是
+  上次拉到的完整列表——进首页先用它同步画出来，再用接口结果覆盖，断网时也能显示。
+- 平台侧的选择存在 `users.buddy_id`（`PUT /api/v1/me/buddy`），换手机登录靠 `/me` 的 `BuddyID`
+  找回：本地没挑过时才用这个兜底，优先级是 本地 id → 个人信息 → 列表第一个。
+- 后台删掉或停用某个搭子后，本地存的 id 会悬空，`utils/buddy.js` 的 `pick()` 自动退回第一个，
+  不需要用户手动改。
+- 图片同样只存相对路径，渲染前过 `utils/image.js` 的 `img()` 拼 CDN 前缀。
+- 气泡是 `.bubble` 绝对定位在 `.buddy` 上方，`z-index: 3`；首页 `.page` 多留了 640rpx 底部内边距，
+  最后一张卡片才能滚到搭子上方而不被挡住。

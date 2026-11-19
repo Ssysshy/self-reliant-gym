@@ -2,21 +2,27 @@ const { request, report } = require("../../api");
 
 const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
 
-// 计划库：本周进度 + 已保存的计划 + 两条新建入口（智能生成 / 自定义周计划）。
-// 排周计划本身在 pages/custom，这一页只负责展示和往里跳。
+// 计划库：本周进度 + 当前计划的一天。
+// 存下来的计划可以有多份（免费 1 / 会员 6），但练的永远只有一份，所以这里只展示当前计划：
+// 上面的星期选择器切换要看哪天，下面的卡片就是那天的安排；点计划名去详情页看整周。
+// 换一份计划走「切换计划」，排周计划本身在 pages/custom。
 Page({
   data: {
     plans: [],
+    active: null,
+    // 星期选择器与选中那天的内容（rest 为 true 表示这天没安排训练）
+    weekView: [],
+    day: null,
+    // 智能生成：先收条件，再出草案
     smart: false,
     selectedDays: [],
     selectedGear: [],
     focus: "全身",
     minutes: 30,
-    // 展示用：本周进度、训练日选择、器材与部位标签
+    // 展示用：本周进度、进行中的训练、最近一次记录
     completed: [],
     local: null,
     lastSession: null,
-    weekView: [],
     dayOpts: WEEK.map((label, i) => ({ d: i + 1, label, on: false })),
     gearOpts: [],
     focusOpts: [],
@@ -24,6 +30,8 @@ Page({
   async onLoad() {
     try {
       const exercises = await request("/exercises");
+      // 计划里只存动作名，点动作行要跳教学页，所以先建一张 名字 → ID 的表
+      this.ids = new Map(exercises.map((x) => [x.Name, x.ID]));
       const focuses = ["全身", ...new Set(exercises.map((x) => x.Muscle))];
       this.setData({
         // 可用器材按分类勾选（器械/杠铃/哑铃…），不按具体机型，否则选项会多到没法选
@@ -37,7 +45,7 @@ Page({
       report(e);
     }
   },
-  // 计划列表也放在 onShow：从自定义周计划页保存或删除后退回来，这一页不会重新 onLoad
+  // 计划列表也放在 onShow：从自定义页保存、或从详情页调整后退回来，这一页不会重新 onLoad
   async onShow() {
     try {
       const [rows, user, plans] = await Promise.all([
@@ -81,10 +89,26 @@ Page({
       // 进行中的训练进度存在本地，服务端只有已经提交过的完整记录
       const progress = wx.getStorageSync("workout:" + user.ID) || null;
       const done = progress ? groups(progress) : 0;
+
+      // 当前计划：用户 Active 指向的那份；老数据 Active 为 0 时退回最新的一份
+      const active = plans.find((p) => p.ID === user.Active) || plans[0] || null;
+      // 只在同一份计划上保留用户手动点的星期，换了计划就重新落到今天/最近的一个训练日
+      const keep = active && this.selPlan === active.ID && this.selDay;
+      const sel = active
+        ? keep
+          ? this.selDay
+          : this.firstDay(active, weekday)
+        : weekday;
+      this.selPlan = active ? active.ID : 0;
+      this.selDay = sel;
+
       this.setData({
-        completed,
         plans,
-        activeId: user.Active,
+        active,
+        completed,
+        sel,
+        day: active ? this.dayOf(active, sel) : null,
+        weekView: this.weekOf(active, sel, weekday, completed),
         local:
           progress && done > 0
             ? {
@@ -96,16 +120,82 @@ Page({
               }
             : null,
         lastSession: last ? { focus: last.Day.Focus, done: groups(last), total: sets(last) } : null,
-        weekView: WEEK.map((label, i) => ({
-          d: i + 1,
-          label,
-          done: completed.includes(i + 1),
-          today: i + 1 === weekday,
-        })),
       });
     } catch (err) {
       report(err);
     }
+  },
+  // 首次进入或换了计划时落在哪天：今天有安排就是今天，否则顺延到本周下一个训练日
+  firstDay(p, today) {
+    const days = (p.Days || []).map((d) => d.Weekday);
+    if (!days.length) return today;
+    if (days.includes(today)) return today;
+    for (let i = 1; i <= 7; i++) {
+      const d = ((today - 1 + i) % 7) + 1;
+      if (days.includes(d)) return d;
+    }
+    return today;
+  },
+  // 星期选择器的一格：has 有安排、done 本周练过、today 今天、sel 当前选中
+  weekOf(p, sel, today, completed) {
+    const has = new Set(((p && p.Days) || []).map((d) => d.Weekday));
+    return WEEK.map((label, i) => ({
+      d: i + 1,
+      label,
+      has: has.has(i + 1),
+      done: completed.includes(i + 1),
+      today: i + 1 === today,
+      sel: i + 1 === sel,
+    }));
+  },
+  // 把计划里某一天整理成页面直接能渲染的结构；没有安排的那天按休息日处理
+  dayOf(p, weekday) {
+    const found = (p.Days || []).find((d) => d.Weekday === weekday);
+    const label = WEEK[weekday - 1];
+    if (!found) {
+      return { weekday, label, rest: true, focus: "休息", items: [], sets: 0, minutes: 0 };
+    }
+    const items = (found.Items || []).map((it, i) => ({
+      key: weekday + "-" + i,
+      Name: it.Name,
+      Sets: it.Sets,
+      Reps: it.Reps,
+      Rest: it.Rest,
+      id: (this.ids && this.ids.get(it.Name)) || 0,
+    }));
+    // 和预览页同一个估时口径：每组 30 秒动作 + 组间休息，取整到 5 分钟
+    const seconds = items.reduce((n, it) => n + it.Sets * (30 + it.Rest), 0);
+    return {
+      weekday,
+      label,
+      rest: false,
+      focus: found.Focus,
+      items,
+      sets: items.reduce((n, it) => n + it.Sets, 0),
+      minutes: Math.max(5, Math.round(seconds / 60 / 5) * 5),
+    };
+  },
+  // 点星期只换内容，不动数据
+  pickDay(e) {
+    const sel = Number(e.currentTarget.dataset.d);
+    const active = this.data.active;
+    if (!active || sel === this.data.sel) return;
+    this.selDay = sel;
+    const today = ((new Date(Date.now() + 8 * 3600000).getUTCDay() + 6) % 7) + 1;
+    this.setData({
+      sel,
+      day: this.dayOf(active, sel),
+      weekView: this.weekOf(active, sel, today, this.data.completed),
+    });
+  },
+  // 计划名 → 整周详情（所有训练日一次看完）
+  openPlan() {
+    if (!this.data.active) return;
+    wx.navigateTo({ url: "/pages/plandetail/index?id=" + this.data.active.ID });
+  },
+  openExercise(e) {
+    const id = e.currentTarget.dataset.id;
+    if (id) wx.navigateTo({ url: "/pages/exercise/index?id=" + id });
   },
   // 模板从「原生 picker 弹窗」改成独立页：封面卡片列表 + 详情，比一列文字好挑
   browse() {
@@ -114,10 +204,9 @@ Page({
   modify(e) {
     wx.navigateTo({ url: "/pages/custom/index?id=" + e.currentTarget.dataset.id });
   },
-  // 删整份计划（训练日一起删）。历史训练记录是当时的快照，不跟着删。
-  // 删的正好是当前计划时，后端把当前位顶到剩下最新的一份，这里只跟着刷新 activeId。
-  async del(e) {
-    const p = this.data.plans[e.currentTarget.dataset.i];
+  // 只有当前计划在页面上，删的就是它。删完重新拉一遍，当前位由后端顶到剩下最新的一份。
+  async del() {
+    const p = this.data.active;
     if (!p) return;
     const r = await wx.showModal({
       title: "删除「" + p.Name + "」？",
@@ -127,17 +216,33 @@ Page({
     });
     if (!r.confirm) return;
     try {
-      const res = await request("/plans/" + p.ID, "DELETE");
+      await request("/plans/" + p.ID, "DELETE");
       // 这份计划上还有没练完的进度，删掉后一并清掉，否则「继续未结束训练」会指向不存在的计划
-      const local = this.data.local;
-      const stale = !!local && local.PlanID === p.ID;
-      if (stale) wx.removeStorageSync("workout:" + this.uid);
-      this.setData({
-        plans: this.data.plans.filter((x) => x.ID !== p.ID),
-        activeId: res.Active,
-        local: stale ? null : local,
-      });
+      if (this.data.local && this.data.local.PlanID === p.ID) {
+        wx.removeStorageSync("workout:" + this.uid);
+      }
       wx.showToast({ title: "已删除", icon: "none" });
+      await this.onShow();
+    } catch (err) {
+      report(err);
+    }
+  },
+  // 多份计划时的切换入口：动作面板列名字（会员上限 6 份，正好在面板条数以内）
+  async switchPlan() {
+    const others = this.data.plans.filter((p) => p.ID !== (this.data.active || {}).ID);
+    if (!others.length) return;
+    let tapIndex = 0;
+    try {
+      const r = await wx.showActionSheet({ itemList: others.map((p) => p.Name) });
+      tapIndex = r.tapIndex;
+    } catch (e) {
+      return; // 取消
+    }
+    try {
+      await request("/plans/" + others[tapIndex].ID + "/active", "PUT");
+      this.selDay = 0; // 换了计划，星期重新落到今天
+      await this.onShow();
+      wx.showToast({ title: "已切换", icon: "none" });
     } catch (err) {
       report(err);
     }
@@ -244,7 +349,9 @@ Page({
     const local = this.data.local;
     if (local) this.go(local.PlanID, local.Weekday);
   },
-  start(e) {
-    this.go(e.currentTarget.dataset.id, e.currentTarget.dataset.day);
+  // 开练的就是当前计划的当前这一天
+  startDay() {
+    const { active, day, sel } = this.data;
+    if (active && day && !day.rest) this.go(active.ID, sel);
   },
 });

@@ -1,4 +1,6 @@
 const { request, login, report } = require("../../api");
+const { img } = require("../../utils/image");
+const { load: getBuddy } = require("../../utils/buddy");
 
 // 首页入口。器材库暂时下架，恢复时把对应项的 on 改回 true 即可。
 // 页面本身不用动：pages/library 是靠 kind 参数区分动作库/器材库的。
@@ -34,6 +36,9 @@ Page({
     entries: HOME_ENTRIES.filter((e) => e.on),
     stage: "",
     encourage: null,
+    // 右下角的健身搭子，以及点击后冒出来的那句台词（空 = 不显示气泡）
+    buddy: null,
+    line: "",
     experience: "",
     templates: [],
     frequency: 2,
@@ -46,7 +51,52 @@ Page({
   async onShow() {
     // 先走引导（没设经验/没计划的人），再弹鼓励语：两层遮罩叠在一起没法操作
     if (wx.getStorageSync("token")) await this.inspect().catch(report);
+    // 搭子先画出来（本地有缓存就是同步的），再轮到鼓励弹窗
+    await this.showBuddy();
     await this.encourage();
+  },
+  // 右下角的健身搭子：本地缓存里挑中的那个优先，没挑过就用列表第一个。
+  // 这里的失败一律吞掉——搭子只是装饰，不该因为接口挂了在首页弹错误。
+  async showBuddy() {
+    try {
+      const b = await getBuddy(this.user && this.user.BuddyID);
+      if (!b.buddy) {
+        this.setData({ buddy: null });
+        return;
+      }
+      // 图片拼 CDN 前缀，Quotes 原样留着给点一下随机取用
+      this.setData({ buddy: { ...b.buddy, ImageURL: img(b.buddy.ImageURL) } });
+    } catch (e) {
+      // 忽略
+    }
+  },
+  // 点一下搭子：随机冒一句，几秒后自己收起来
+  talk() {
+    const quotes = (this.data.buddy && this.data.buddy.Quotes) || [];
+    if (!quotes.length) return;
+    let next = quotes[Math.floor(Math.random() * quotes.length)];
+    // 尽量不连着冒同一句；只有一句的时候也只好重复
+    for (let i = 0; i < 5 && quotes.length > 1 && next === this.data.line; i++) {
+      next = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+    if (this.bubbleTimer) clearTimeout(this.bubbleTimer);
+    this.setData({ line: next });
+    this.bubbleTimer = setTimeout(() => {
+      this.bubbleTimer = null;
+      this.setData({ line: "" });
+    }, 4200);
+  },
+  // 离开首页就把气泡收掉，回来时不带着上次那句
+  onHide() {
+    this.stopBubble();
+  },
+  onUnload() {
+    this.stopBubble();
+  },
+  stopBubble() {
+    if (this.bubbleTimer) clearTimeout(this.bubbleTimer);
+    this.bubbleTimer = null;
+    if (this.data.line) this.setData({ line: "" });
   },
   // 鼓励弹窗：取后台今天的这一条，次数与日期落在本地。
   // 同一次停留只尝试一次 —— 从二级页返回首页也会触发 onShow，不该把两次额度连着用掉。

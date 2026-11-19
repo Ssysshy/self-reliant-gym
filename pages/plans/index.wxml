@@ -1,15 +1,18 @@
 <view class="page">
   <view class="title">训练计划</view>
 
-  <!-- 计划库：本周进度 + 当前计划的训练日 -->
   <block wx:if="{{ !smart }}">
+    <!-- 星期选择器：一格里同时表示「这天有安排 / 本周练过 / 今天」，点它就是切换下面的内容 -->
     <view class="week">
       <view
         wx:for="{{ weekView }}"
         wx:key="d"
-        class="week-day {{ item.done ? 'done' : '' }} {{ item.today ? 'today' : '' }}"
+        class="week-day {{ item.has ? 'has' : 'rest' }} {{ item.sel ? 'sel' : '' }} {{ item.today && !item.sel ? 'today' : '' }}"
+        data-d="{{ item.d }}"
+        bindtap="pickDay"
       >
-        {{ item.label }}
+        <text>{{ item.label }}</text>
+        <view wx:if="{{ item.done }}" class="dot {{ item.sel ? 'on' : '' }}"></view>
       </view>
     </view>
     <view class="week-note">本周已完成 {{ completed.length || 0 }} 个训练日</view>
@@ -36,33 +39,52 @@
       </view>
     </view>
 
-    <view wx:for="{{ plans }}" wx:key="ID" class="plan">
+    <!-- 当前计划：只有一份在练，所以只展示这一份；内容跟着上面的星期走 -->
+    <view wx:if="{{ active }}" class="plan">
       <view class="plan-head">
-        <text class="plan-name">{{ item.Name }}</text>
-        <text wx:if="{{ activeId === item.ID }}" class="badge">当前</text>
-        <text wx:else class="badge off">未启用</text>
-        <text class="plan-adjust" data-id="{{ item.ID }}" bindtap="modify">调整</text>
-        <text class="plan-del" data-i="{{ index }}" bindtap="del">删除</text>
-      </view>
-      <view class="days">
-        <view
-          wx:for="{{ item.Days }}"
-          wx:for-item="day"
-          wx:key="Weekday"
-          class="day-row"
-          data-id="{{ item.ID }}"
-          data-day="{{ day.Weekday }}"
-          bindtap="start"
-        >
-          <text class="day-week">周{{ day.Weekday }}</text>
-          <text class="grow day-focus">{{ day.Focus }}</text>
-          <text class="day-count">{{ day.Items.length || 0 }} 个动作</text>
+        <view class="plan-title" bindtap="openPlan">
+          <text class="plan-name">{{ active.Name }}</text>
           <text class="chev">›</text>
         </view>
+        <text class="badge">当前</text>
+        <text class="plan-adjust" data-id="{{ active.ID }}" bindtap="modify">调整</text>
+        <text class="plan-del" bindtap="del">删除</text>
       </view>
+
+      <view class="day-head">
+        <view class="day-focus">{{ day.rest ? "休息日" : day.focus }}</view>
+        <view wx:if="{{ !day.rest }}" class="day-meta">
+          周{{ day.label }} · {{ day.items.length }} 个动作 · {{ day.sets }} 组 · 约
+          {{ day.minutes }} 分钟
+        </view>
+        <view wx:else class="day-meta">周{{ day.label }} 没有安排训练，切上面其它天看看</view>
+      </view>
+
+      <view wx:if="{{ !day.rest }}" class="items">
+        <view
+          wx:for="{{ day.items }}"
+          wx:key="key"
+          class="item"
+          data-id="{{ item.id }}"
+          bindtap="openExercise"
+        >
+          <text class="item-name">{{ item.Name }}</text>
+          <text class="item-sets">{{ item.Sets }} × {{ item.Reps }}</text>
+          <text class="item-rest">{{ item.Rest }}s</text>
+          <text wx:if="{{ item.id }}" class="chev">›</text>
+        </view>
+      </view>
+
       <view class="plan-actions">
-        <button class="primary" data-id="{{ item.ID }}" bindtap="start">开始或继续训练</button>
+        <button wx:if="{{ !day.rest }}" class="primary" bindtap="startDay">开始或继续训练</button>
+        <button wx:else class="ghost" data-id="{{ active.ID }}" bindtap="modify">调整计划</button>
       </view>
+    </view>
+
+    <view wx:if="{{ plans.length > 1 }}" class="switch" bindtap="switchPlan">
+      <text class="switch-label">切换计划</text>
+      <text class="switch-sub">共 {{ plans.length }} 份</text>
+      <text class="chev">›</text>
     </view>
 
     <view class="card" bindtap="browse">

@@ -15,6 +15,13 @@
     </view>
     <text class="arrow">›</text>
   </view>
+  <!-- 健身搭子：右下角固定展示，点一下只在上方冒台词，人物本身不动 -->
+  <view wx:if="{{ buddy }}" class="buddy" bindtap="talk">
+    <image class="buddy-img" src="{{ buddy.ImageURL }}" mode="aspectFill" />
+  </view>
+  <!-- 气泡是独立一层，不放进 .buddy：父元素的 z-index 会形成层叠上下文，
+       气泡再高也跳不出 3，盖不住新手引导（5）和鼓励弹窗（9） -->
+  <view wx:if="{{ line }}" class="bubble" bindtap="talk">{{ line }}</view>
 </view>
 <view wx:if="{{ stage }}" class="mask">
   <view class="sheet">

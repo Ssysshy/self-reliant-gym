@@ -1,4 +1,5 @@
 const { request, report } = require("../../api");
+const { img } = require("../../utils/image");
 
 const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
 
@@ -35,7 +36,8 @@ Page({
       const days = t.Days || [];
       this.setData({
         name: t.Name,
-        cover: meta.Cover || "",
+        // 封面的完整地址统一由 img() 拼，库里只存相对路径
+        cover: img(meta.Cover),
         level: meta.Level || "",
         minutes: meta.Minutes || 0,
         blocks: meta.Blocks || [],

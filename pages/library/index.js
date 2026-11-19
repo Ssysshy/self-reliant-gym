@@ -1,4 +1,5 @@
 const { request, report } = require("../../api");
+const { img } = require("../../utils/image");
 
 // 顶部器材筛选的第一项，代表不过滤
 const ALL = "全部";
@@ -110,7 +111,11 @@ Page({
     });
     // 换分类要回到顶部，否则上一组滚到一半的位置会留在新列表上。
     // scroll-top 值相同不会触发滚动，所以在 0/1 之间来回切。
-    this.setData({ rows, scrollTop: this.data.scrollTop === 0 ? 1 : 0 });
+    // 缩略图的完整地址在这里一次拼好，this.all 保留后端原值，筛选仍按原始数据算
+    this.setData({
+      rows: rows.map((x) => ({ ...x, ImageURL: img(x.ImageURL) })),
+      scrollTop: this.data.scrollTop === 0 ? 1 : 0,
+    });
   },
   search(e) {
     this.setData({ query: e.detail.value });

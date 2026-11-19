@@ -13,23 +13,31 @@ class RequestError extends Error {
   }
 }
 
+type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+// 登录接口本身不参与「401 自动重登」，否则会自己套自己
+const LOGIN = '/auth/wechat';
+
 // 接口地址由 config/env.js 按版本决定，这里只读 globalData，页面里不要再写死域名
-export function request<T>(path: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET', data: Record<string, unknown> = {}): Promise<T> {
-  const app = getApp<{globalData: {apiBase: string}}>();
+function base(): string {
+  return getApp<{globalData: {apiBase: string}}>().globalData.apiBase;
+}
+
+// 单次请求，不做重试；401 统一交给 request() 处理
+function send<T>(path: string, method: Method, data: Record<string, unknown>, token: string): Promise<T> {
   return new Promise((resolve, reject) => {
     wx.request({
-      url: app.globalData.apiBase + path,
+      url: base() + path,
       method,
       data,
       // 断网或域名不通时不设超时会让 loading 一直转，15 秒兜底
       timeout: 15000,
-      header: {Authorization: 'Bearer ' + (wx.getStorageSync('token') || '')},
+      header: {Authorization: 'Bearer ' + token},
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data as T);
           return;
         }
-        if (res.statusCode === 401) wx.removeStorageSync('token');
         const body = res.data as {error?: string} | null;
         reject(new RequestError(body?.error || '请求失败', res.statusCode));
       },
@@ -38,9 +46,55 @@ export function request<T>(path: string, method: 'GET' | 'POST' | 'PUT' | 'DELET
   });
 }
 
+// 静默重登：并发请求同时撞 401 时共用这一次登录。
+// wx.login 的 code 是一次性的，不能每个请求各换一个。
+let pending: Promise<unknown> | null = null;
+
+function relogin(): Promise<unknown> {
+  if (pending) return pending;
+  wx.showLoading({title: '重新登录中', mask: true});
+  pending = login()
+    .catch((e: {message?: string; errMsg?: string}) => {
+      // 换不到新 token 就把旧的清掉，免得之后每个请求都先白撞一次 401
+      wx.removeStorageSync('token');
+      // wx.login 失败抛的是 {errMsg}，统一成一句人话再往上抛
+      throw e instanceof RequestError ? e : new RequestError((e && (e.message || e.errMsg)) || '重新登录失败', 401);
+    })
+    .finally(() => {
+      pending = null;
+      wx.hideLoading();
+    });
+  return pending;
+}
+
+// 所有接口入口。token 过期（12 小时）时在这里静默换新 token 并把原请求重放一次，
+// 页面拿到的仍是正常结果，用户只在换 token 的那一小会儿看到「重新登录中」。
+export async function request<T>(path: string, method: Method = 'GET', data: Record<string, unknown> = {}): Promise<T> {
+  const token = (wx.getStorageSync('token') as string) || '';
+  try {
+    return await send<T>(path, method, data, token);
+  } catch (e) {
+    if (!(e instanceof RequestError) || e.status !== 401 || path === LOGIN) throw e;
+    // 并发场景：另一个请求已经把 token 换掉了（或清空了），直接用它重试，不必再登录一次
+    const current = (wx.getStorageSync('token') as string) || '';
+    if (!current || current === token) await relogin();
+    const fresh = (wx.getStorageSync('token') as string) || '';
+    try {
+      return await send<T>(path, method, data, fresh);
+    } catch (retry) {
+      // 换过 token 仍然 401：确实登不上，清掉本地凭据，下次点受保护入口会重新走登录
+      if (retry instanceof RequestError && retry.status === 401) {
+        wx.removeStorageSync('token');
+        throw new RequestError('登录已失效，请重试', 401);
+      }
+      throw retry;
+    }
+  }
+}
+
 export async function login(): Promise<UserProfile> {
   const {code} = await wx.login();
-  const result = await request<{token: string; user: UserProfile}>('/auth/wechat','POST',{Code:code});
+  const result = await request<{token: string; user: UserProfile}>(LOGIN,'POST',{Code:code});
   wx.setStorageSync('token',result.token);
   return result.user;
 }

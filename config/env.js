@@ -24,6 +24,12 @@ const ACTIVE_ENV = "dev"; // dev | test | prod | 空 = 按版本自动
 
 const PORT = 18080;
 
+// 图片 CDN 前缀。动作示范图、计划封面在库里只存相对路径（/assets/plans/xx.jpg），
+// 域名只写在这里，页面统一用 utils/image.js 的 img() 拼——以后换 CDN 只改这一行，
+// 不用去翻数据、也不用逐页改 wxml。
+// 留空 = 用小程序包内的相对路径（assets/ 还在包里时本地开发就是这样跑的）。
+const CDN_IMG = ""; // 例："https://img.example.com"
+
 // 手动选择用的短名 → envVersion 的键，命令比常量好敲
 const ALIASES = { dev: "develop", test: "trial", prod: "release" };
 
@@ -84,13 +90,18 @@ function resolve() {
   }
 
   apiBase = normalize(apiBase);
+  const cdnImg = normalize(CDN_IMG);
 
   if (official && !/^https:\/\//.test(apiBase)) {
     console.error("[env] 正式版接口必须是 https，当前是 " + apiBase + "，真机上会被微信拦截");
   } else if (!official && /^http:\/\/(127\.0\.0\.1|localhost)/.test(apiBase)) {
     console.warn("[env] 当前连的是本机 " + apiBase + "，只在开发者工具里有效，手机上会连不上");
   }
-  return { envVersion, active: ACTIVE_ENV, target, apiBase, label: profile.label };
+  // 图片走的是 wxml 的 <image>，正式版同样只认 https，且域名要在小程序后台登记
+  if (official && cdnImg && !/^https:\/\//.test(cdnImg)) {
+    console.error("[env] 正式版图片 CDN 必须是 https，当前是 " + cdnImg);
+  }
+  return { envVersion, active: ACTIVE_ENV, target, apiBase, cdnImg, label: profile.label };
 }
 
 // 真机调试用：在开发者工具 Console 里执行 setApiBase("http://192.168.1.8:18080/api/v1") 后重启预览
@@ -103,4 +114,4 @@ function clearApiBase() {
   wx.removeStorageSync("apiBase");
 }
 
-module.exports = { PROFILES, ALIASES, PORT, ACTIVE_ENV, resolve, setApiBase, clearApiBase };
+module.exports = { PROFILES, ALIASES, PORT, ACTIVE_ENV, CDN_IMG, resolve, setApiBase, clearApiBase };

@@ -19,6 +19,64 @@
   margin-top: 62rpx;
 }
 
+/* 首页右下角的健身搭子：固定 432×576，右下角贴边（不留白边），别跟着页面滚。
+   多留一截底部内边距，最后一张卡片才能滚到搭子上方，不会被挡住。 */
+.page {
+  padding-bottom: 640rpx;
+}
+.buddy {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 432rpx;
+  height: 576rpx;
+  z-index: 3;
+}
+.buddy-img {
+  display: block;
+  width: 432rpx;
+  height: 576rpx;
+  background: #f4f4f2;
+}
+
+/* 台词气泡：贴在人物左上角——左边缘和图片左边缘对齐（750 − 432 = 318rpx），
+   底边压在图片顶上 18rpx。层级给到最高，压在鼓励弹窗（9）和新手引导（5）之上。 */
+.bubble {
+  position: fixed;
+  left: 318rpx;
+  bottom: 594rpx;
+  z-index: 9999;
+  max-width: 408rpx;
+  min-width: 140rpx;
+  padding: 18rpx 22rpx;
+  background: #191919;
+  color: #fff;
+  font-size: 26rpx;
+  line-height: 1.5;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+  animation: bubble-in 0.16s ease-out;
+}
+/* 尾巴落在气泡左侧，指向图片的左上角 */
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: 40rpx;
+  top: 100%;
+  border: 10rpx solid transparent;
+  border-top-color: #191919;
+}
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(12rpx);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* 首页：新手引导弹层 */
 .mask {
   position: fixed;
