@@ -1,4 +1,4 @@
-const { request, report } = require("../../api");
+const { request, exercises, report } = require("../../api");
 const { img } = require("../../utils/image");
 
 // 开练前的清单页：只读 /sessions/preview，不写本地进度。
@@ -24,14 +24,14 @@ Page({
 
   async load() {
     try {
-      const [plan, exercises, me] = await Promise.all([
+      const [plan, list, me] = await Promise.all([
         request("/sessions/preview?plan=" + this.planId + "&weekday=" + (this.weekday || 0)),
-        request("/exercises"),
+        exercises(),
         request("/me"),
       ]);
       // day 传 0 时由后端决定今天该练哪天，拿到结果后把真实星期记下来给执行页
       this.weekday = plan.Day.Weekday;
-      const meta = new Map(exercises.map((x) => [x.Name, x]));
+      const meta = new Map(list.map((x) => [x.Name, x]));
       const items = plan.Day.Items || [];
       const total = items.reduce((n, it) => n + it.Sets, 0);
 

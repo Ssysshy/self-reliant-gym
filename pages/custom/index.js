@@ -1,4 +1,4 @@
-const { request, report } = require("../../api");
+const { request, exercises, report } = require("../../api");
 
 const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
 // 智能生成的草案动辄十几个动作，塞不进 URL，改成本地暂存交接一次
@@ -21,10 +21,10 @@ Page({
   },
   async onLoad(q) {
     try {
-      const [me, exercises] = await Promise.all([request("/me"), request("/exercises")]);
+      const [me, list] = await Promise.all([request("/me"), exercises()]);
       // 保存时要带上当前计划 ID 做乐观校验，后端对不上会判冲突
       this.active = me.Active;
-      this.setData({ exercises });
+      this.setData({ exercises: list });
       // 三个入口按优先级取一个起稿来源，取到就返回，后面的不再请求
       if (Number(q.id) > 0) {
         const plans = await request("/plans");

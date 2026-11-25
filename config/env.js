@@ -20,15 +20,16 @@
 // 发版就会让线上指向内网——真上线了才发现接口连不上，是最难查的一类事故。
 //
 // 下面这行由 scripts/set-env.mjs 改写，手改会被下次命令覆盖。
-const ACTIVE_ENV = "dev"; // dev | test | prod | 空 = 按版本自动
+const ACTIVE_ENV = "prod"; // dev | test | prod | 空 = 按版本自动
 
 const PORT = 18080;
 
 // 图片 CDN 前缀。动作示范图、计划封面在库里只存相对路径（/assets/plans/xx.jpg），
 // 域名只写在这里，页面统一用 utils/image.js 的 img() 拼——以后换 CDN 只改这一行，
 // 不用去翻数据、也不用逐页改 wxml。
+// 这个域名只放图片/视频这类静态资源，接口永远走 gymapi.voiddiver.cn，两者不要混用。
 // 留空 = 用小程序包内的相对路径（assets/ 还在包里时本地开发就是这样跑的）。
-const CDN_IMG = ""; // 例："https://img.example.com"
+const CDN_IMG = "https://cdn.voiddiver.cn";
 
 // 手动选择用的短名 → envVersion 的键，命令比常量好敲
 const ALIASES = { dev: "develop", test: "trial", prod: "release" };
@@ -44,11 +45,11 @@ const PROFILES = {
   trial: {
     label: "体验版",
     // 体验版也必须走 https + 微信后台登记的合法域名，否则手机上直接被拦
-    apiBase: "https://api.example.com/api/v1",
+    apiBase: "https://gymapi.voiddiver.cn/api/v1",
   },
   release: {
     label: "正式版",
-    apiBase: "https://api.example.com/api/v1",
+    apiBase: "https://gymapi.voiddiver.cn/api/v1",
   },
 };
 

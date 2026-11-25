@@ -11,14 +11,6 @@
   color: #aaa;
 }
 
-/* 首页：底部「记录与账户」入口 */
-.foot {
-  text-align: center;
-  color: #888;
-  font-size: 25rpx;
-  margin-top: 62rpx;
-}
-
 /* 首页右下角的健身搭子：固定 432×576，右下角贴边（不留白边），别跟着页面滚。
    多留一截底部内边距，最后一张卡片才能滚到搭子上方，不会被挡住。 */
 .page {
@@ -36,35 +28,52 @@
   display: block;
   width: 432rpx;
   height: 576rpx;
-  background: #f4f4f2;
 }
 
-/* 台词气泡：贴在人物左上角——左边缘和图片左边缘对齐（750 − 432 = 318rpx），
-   底边压在图片顶上 18rpx。层级给到最高，压在鼓励弹窗（9）和新手引导（5）之上。 */
+/* 台词气泡：贴在人物左上方，底边在图片顶上 18rpx。
+   白底黑框黑字 + 一层投影，白底压在白页面上才不会糊成一片。
+   层级给到最高，压在鼓励弹窗（9）和新手引导（5）之上。 */
 .bubble {
   position: fixed;
-  left: 318rpx;
+  /* 比图片左边缘（432rpx）再往右 170rpx，靠近人物脑袋又不压到脸 */
+  right: 262rpx;
   bottom: 594rpx;
   z-index: 9999;
-  max-width: 408rpx;
+  /* 再宽就顶到屏幕左边了，长句会折行 */
+  max-width: 400rpx;
   min-width: 140rpx;
   padding: 18rpx 22rpx;
-  background: #191919;
-  color: #fff;
+  background: #fff;
+  color: #191919;
   font-size: 26rpx;
   line-height: 1.5;
+  border: 2rpx solid #191919;
   border-radius: 16rpx;
   box-sizing: border-box;
+  /* 白底压在白页面上容易糊成一片，加一层投影托起来。
+     用 drop-shadow 而不是 box-shadow：影子跟「气泡 + 尾巴」的外轮廓走，
+     不会在气泡底边压出一条横线穿过尾巴 */
+  -webkit-filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.12));
   animation: bubble-in 0.16s ease-out;
 }
-/* 尾巴落在气泡左侧，指向图片的左上角 */
+/* 尾巴两层：黑色描边三角在下，白色内三角压上去 2rpx 盖住气泡底边线，
+   这样尖角也是黑框白心，和气泡本体连成一体 */
+.bubble::before {
+  content: "";
+  position: absolute;
+  right: 26rpx;
+  top: 100%;
+  border: 12rpx solid transparent;
+  border-top-color: #191919;
+}
 .bubble::after {
   content: "";
   position: absolute;
-  left: 40rpx;
-  top: 100%;
+  right: 28rpx;
+  top: calc(100% - 2rpx);
   border: 10rpx solid transparent;
-  border-top-color: #191919;
+  border-top-color: #fff;
 }
 @keyframes bubble-in {
   from {
@@ -77,7 +86,7 @@
   }
 }
 
-/* 首页：新手引导弹层 */
+/* 首页：弹层（首页只在这一层里做「选模板」，没有计划的人才会看到） */
 .mask {
   position: fixed;
   inset: 0;
@@ -86,15 +95,201 @@
   align-items: center;
   padding: 50rpx;
   z-index: 5;
+  animation: mask-in 0.18s ease-out;
 }
 .sheet {
   width: 100%;
   background: #fff;
-  padding: 36rpx;
-  border-radius: 28rpx;
+  padding: 40rpx 36rpx 24rpx;
+  border-radius: 30rpx;
   max-height: 80vh;
   overflow: auto;
   box-sizing: border-box;
+  animation: sheet-in 0.22s ease-out;
+}
+
+@keyframes mask-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(28rpx) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 选模板：标题一行，右边留一个「自己排计划」的出口（老手不用模板） */
+.sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+.sheet-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.sheet-link {
+  flex: 0 0 auto;
+  margin-top: 2rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: #f4f4f2;
+  color: #666;
+  font-size: 24rpx;
+  line-height: 1.4;
+}
+.sheet-sub {
+  color: #888;
+  font-size: 25rpx;
+  line-height: 1.6;
+  margin-top: 10rpx;
+}
+
+/* 模板卡：白底细描边，和首页入口卡同一套语言。
+   不用封面图——库里封面走 CDN，没配或加载失败就是一块空黑，反而比没图更难看 */
+.tpl {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx;
+  margin-top: 18rpx;
+  border: 2rpx solid #e8e8e5;
+  border-radius: 22rpx;
+  background: #fff;
+}
+.tpl.picked {
+  border-color: #191919;
+}
+.tpl-hover {
+  background: #fafaf8;
+}
+/* 左边天数块：选中后整块反白，扫一眼就知道选了哪张 */
+.tpl-days {
+  flex: 0 0 auto;
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 18rpx;
+  background: #f4f4f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.tpl-days-n {
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.tpl-days-u {
+  color: #999;
+  font-size: 19rpx;
+  line-height: 1.4;
+}
+.tpl.picked .tpl-days {
+  background: #191919;
+}
+.tpl.picked .tpl-days-n {
+  color: #fff;
+}
+.tpl.picked .tpl-days-u {
+  color: #a5a5a0;
+}
+.tpl-main {
+  flex: 1;
+  min-width: 0;
+}
+.tpl-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.32;
+}
+.tpl-meta {
+  color: #888;
+  font-size: 23rpx;
+  line-height: 1.4;
+  margin-top: 4rpx;
+}
+/* 一周周历：有安排的那天用深色字，比「6 个训练日」更能看出练的是哪几天。
+   只做文字不加底块——七个小方块会像七个按钮，把卡片压得很吵。
+   类名刻意不用 .on：interactive.wxss 里的 .on 是给 chip 用的（黑底白字），
+   复用会把每个格子涂成实心方块 */
+.tpl-week {
+  display: flex;
+  gap: 13rpx;
+  margin-top: 10rpx;
+}
+.tpl-day {
+  color: #cdcdc7;
+  font-size: 22rpx;
+  line-height: 1.4;
+}
+.tpl-day.day-on {
+  color: #191919;
+}
+/* 右侧单选圈：选中变成黑底白点，和左边天数块一起构成选中反馈（同样避开 .on） */
+.tpl-radio {
+  flex: 0 0 auto;
+  width: 34rpx;
+  height: 34rpx;
+  border: 2rpx solid #d8d8d3;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tpl-radio.radio-on {
+  border-color: #191919;
+  background: #191919;
+}
+.tpl-radio.radio-on::after {
+  content: "";
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* 主按钮常驻黑色：没选之前文案是「先选一套」，点了给一句提示而不是变成一块死灰。
+   加载中才禁用，禁用态自己接管——微信默认的 button[disabled] 会盖成一片灰，
+   这里靠 .sheet .btn[disabled] 提高权重压回去 */
+.btn {
+  width: 100%;
+  margin: 30rpx 0 0;
+  padding: 0;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 20rpx;
+  background: #171717;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.btn::after {
+  border: none;
+}
+.sheet .btn[disabled] {
+  background: #171717;
+  color: #fff;
+  opacity: 0.6;
+}
+.sheet-foot {
+  margin-top: 12rpx;
+  padding: 16rpx 0 4rpx;
+  text-align: center;
+  color: #999;
+  font-size: 25rpx;
 }
 
 /* 首页：鼓励弹窗。做成一张「语录卡」——引号压在第一行文字上方，

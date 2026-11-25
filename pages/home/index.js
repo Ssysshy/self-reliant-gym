@@ -11,6 +11,9 @@ const HOME_ENTRIES = [
   { label: "记录与账户", icon: "◍", desc: "回看记录与会员", on: true },
 ];
 
+// 选模板的卡片上画一周七格，下标 0 是周一（和计划里 Weekday 1-7 对齐）
+const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
+
 // 首页鼓励弹窗：后台每天定一条「今日推送」，这里只取这一条，每天最多弹两次。
 // 本地只记「今天弹了几次、今天这条是什么」，换一天自动从头算；两次用完当天不再打扰。
 const ENCOURAGE_KEY = "encouragement";
@@ -24,7 +27,7 @@ function today() {
   return d.getUTCFullYear() + "-" + p(d.getUTCMonth() + 1) + "-" + p(d.getUTCDate());
 }
 
-// 引导跳去别的页面（如「训练老炮」直通自定义计划）后不该再往首页上盖弹窗
+// 引导跳去别的页面（如自己排计划）后不该再往首页上盖弹窗
 function onHome() {
   const pages = getCurrentPages();
   const top = pages[pages.length - 1];
@@ -39,17 +42,13 @@ Page({
     // 右下角的健身搭子，以及点击后冒出来的那句台词（空 = 不显示气泡）
     buddy: null,
     line: "",
-    experience: "",
+    // 还没有计划的人：弹窗里直接列推荐模板，选中一套再启用
     templates: [],
-    frequency: 2,
-    frequencies: [],
-    focus: ["全身"],
-    focuses: [],
-    matches: [],
-    plan: null,
+    picked: -1,
+    saving: false,
   },
   async onShow() {
-    // 先走引导（没设经验/没计划的人），再弹鼓励语：两层遮罩叠在一起没法操作
+    // 先走引导（还没有计划的人），再弹鼓励语：两层遮罩叠在一起没法操作
     if (wx.getStorageSync("token")) await this.inspect().catch(report);
     // 搭子先画出来（本地有缓存就是同步的），再轮到鼓励弹窗
     await this.showBuddy();
@@ -84,7 +83,7 @@ Page({
     this.bubbleTimer = setTimeout(() => {
       this.bubbleTimer = null;
       this.setData({ line: "" });
-    }, 4200);
+    }, 8200);
   },
   // 离开首页就把气泡收掉，回来时不带着上次那句
   onHide() {
@@ -145,45 +144,58 @@ Page({
   async inspect() {
     const u = await request("/me");
     this.user = u;
-    if (!u.Active && !this.dismissed) await this.guide(u);
+    // 已经有计划的人不该被弹窗拦住；一次停留里关掉之后也不再打扰
+    if (this.dismissed || (await this.hasPlan())) return;
+    await this.pick();
   },
-  async guide(u) {
-    if (!u.Experience) {
-      this.setData({ stage: "experience" });
-      return;
+  // 有没有计划不能只看 /me 的 Active：老数据的 Active 是 0 但计划还在（计划页会退回最新一份），
+  // 那种人再建一份会撞上「免费 1 份」的上限，所以 Active 为 0 时再问一次 /plans。
+  async hasPlan() {
+    if (this.user && this.user.Active) return true;
+    const plans = await request("/plans");
+    return plans.length > 0;
+  },
+  // 没有计划的人：不再先问「小白还是老炮」，也不按一周几练、练哪儿筛选，
+  // 直接把后台发布的模板摆出来让人选（点卡片选中，再点按钮启用）。
+  async pick() {
+    if (this.picking) return;
+    this.picking = true;
+    try {
+      const list = await request("/templates");
+      if (!list.length) {
+        // 后台一个模板都没发布，弹个空窗没意义，给句话让人自己排
+        wx.showToast({ title: "还没有可用的模板", icon: "none" });
+        return;
+      }
+      this.setData({
+        stage: "templates",
+        picked: -1,
+        templates: list.map((t) => {
+          const meta = t.Meta || {};
+          const days = t.Days || [];
+          const on = new Set(days.map((d) => d.Weekday));
+          return {
+            ID: t.ID,
+            Revision: t.Revision,
+            Name: t.Name,
+            // 天数单独用左边的方块显示，这行只留时长和难度
+            days: days.length,
+            meta: [
+              meta.Minutes ? "约 " + meta.Minutes + " 分钟" : "",
+              meta.Level || "",
+            ]
+              .filter(Boolean)
+              .join(" · "),
+            // 一周七格：有安排的那天点亮，比「6 个训练日」更能看出练的是哪几天
+            week: WEEK.map((label, i) => ({ label, on: on.has(i + 1) })),
+          };
+        }),
+      });
+    } catch (e) {
+      report(e);
+    } finally {
+      this.picking = false;
     }
-    if (u.Experience === "训练老炮") {
-      this.dismissed = true;
-      wx.navigateTo({ url: "/pages/custom/index" });
-      return;
-    }
-    const [templates, exercises] = await Promise.all([
-      request("/templates"),
-      request("/exercises"),
-    ]);
-    this.muscles = new Map(exercises.map((x) => [x.Name, x.Muscle]));
-    const frequencies = [
-      ...new Set(templates.map((t) => t.Days.length)),
-    ].sort();
-    const focuses = [
-      ...new Set(
-        templates.flatMap((t) =>
-          t.Days.flatMap((d) => [
-            d.Focus,
-            ...d.Items.map((i) => this.muscles.get(i.Name)).filter(Boolean),
-          ]),
-        ),
-      ),
-    ];
-    this.setData({
-      stage: "preferences",
-      templates,
-      frequencies,
-      frequency: frequencies[0] || 2,
-      focuses,
-      focus: [focuses[0] || "全身"],
-      marked: { [focuses[0] || "全身"]: true },
-    });
   },
   async open(e) {
     if (this.busy) return;
@@ -202,94 +214,64 @@ Page({
         wx.navigateTo({ url: "/pages/account/index" });
         return;
       }
-      if (!u.Active) {
-        await this.guide(u);
+      // 训练计划：没有计划就地弹模板让人选一套，有计划才进计划页
+      if (await this.hasPlan()) {
+        wx.navigateTo({ url: "/pages/plans/index" });
         return;
       }
-      wx.navigateTo({ url: "/pages/plans/index" });
+      await this.pick();
     } catch (err) {
       report(err);
     } finally {
       this.busy = false;
     }
   },
-  async experience(e) {
-    try {
-      const Experience = e.currentTarget.dataset.v;
-      await request("/experience", "PUT", { Experience });
-      this.setData({ stage: "" });
-      await this.guide({ ...this.user, Experience });
-    } catch (err) {
-      report(err);
-    }
-  },
-  select(e) {
-    if (e.currentTarget.dataset.key === "focus") {
-      const value = e.currentTarget.dataset.v;
-      let focus = this.data.focus.filter((x) => x !== "全身" && x !== value);
-      if (value === "全身") focus = ["全身"];
-      else if (!this.data.focus.includes(value)) focus.push(value);
-      this.setData({
-        focus,
-        marked: focus.reduce((m, k) => ({ ...m, [k]: true }), {}),
-      });
-      return;
-    }
-    this.setData({ [e.currentTarget.dataset.key]: e.currentTarget.dataset.v });
-  },
-  match() {
-    const { templates, frequency, focus } = this.data;
-    const matches = templates.filter(
-      (t) =>
-        t.Days.length === frequency &&
-        focus.length &&
-        focus.every((f) =>
-          t.Days.some(
-            (d) =>
-              d.Focus === f ||
-              d.Items.some((i) => this.muscles.get(i.Name) === f),
-          ),
-        ),
-    );
-    this.setData({ matches, stage: "matches" });
-  },
-  back() {
-    this.setData({ stage: "preferences" });
+  // 点卡片只选中：一点就直接建计划太容易误触，多出来的那份还得自己去删
+  choose(e) {
+    this.setData({ picked: Number(e.currentTarget.dataset.i) });
   },
   close() {
+    if (this.data.saving) return;
     this.dismissed = true;
     this.setData({ stage: "" });
     // 引导关掉后补一次鼓励弹窗：刚才是它占着屏才没弹
     this.encourage();
   },
-  async adopt(e) {
-    if (this.busy) return;
-    this.busy = true;
-    try {
-      const p = this.data.matches[e.currentTarget.dataset.i];
-      const plan = await request("/plans", "POST", {
-        Operation:
-          this.operationId ||
-          (this.operationId =
-            Date.now().toString(36) +
-            "-" +
-            Math.random().toString(36).slice(2)),
-        Template: p.ID,
-        Revision: p.Revision,
-        Active: this.user.Active,
-      });
-      this.operationId = null;
-      this.setData({ stage: "start", plan });
-    } catch (err) {
-      report(err);
-    } finally {
-      this.busy = false;
-    }
-  },
-  start() {
-    // 这里直接收引导、不走 close()：马上要跳去开练页，不该再叠一个鼓励弹窗
+  // 不想用模板的人从这里自己排一周（原来是「训练老炮」那条自动跳转）
+  custom() {
     this.dismissed = true;
     this.setData({ stage: "" });
-    wx.navigateTo({ url: "/pages/preview/index?id=" + this.data.plan.ID });
+    wx.navigateTo({ url: "/pages/custom/index" });
+  },
+  async adopt() {
+    if (this.data.saving) return;
+    const p = this.data.templates[this.data.picked];
+    if (!p) {
+      // 按钮一直是可点的，没选就点只会给一句提示，不至于莫名其妙没有反应
+      wx.showToast({ title: "先点上面的卡片选一套", icon: "none" });
+      return;
+    }
+    this.setData({ saving: true });
+    // 同一个 Operation 重试时后端返回已建好的那份，不会重复建计划
+    this.operationId =
+      this.operationId ||
+      Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+    try {
+      await request("/plans", "POST", {
+        Operation: this.operationId,
+        Template: p.ID,
+        Revision: p.Revision,
+        Active: (this.user && this.user.Active) || 0,
+      });
+      this.operationId = null;
+      this.dismissed = true;
+      this.setData({ stage: "", saving: false });
+      wx.showToast({ title: "已启用", icon: "none" });
+      // 启用后直接进计划页：今天的安排就在那儿，从那儿开练
+      wx.navigateTo({ url: "/pages/plans/index" });
+    } catch (err) {
+      this.setData({ saving: false });
+      report(err);
+    }
   },
 });

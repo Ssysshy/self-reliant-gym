@@ -1,4 +1,4 @@
-const { request, report } = require("../../api");
+const { request, exercises, report } = require("../../api");
 
 const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
 
@@ -29,13 +29,13 @@ Page({
   },
   async onLoad() {
     try {
-      const exercises = await request("/exercises");
+      const list = await exercises();
       // 计划里只存动作名，点动作行要跳教学页，所以先建一张 名字 → ID 的表
-      this.ids = new Map(exercises.map((x) => [x.Name, x.ID]));
-      const focuses = ["全身", ...new Set(exercises.map((x) => x.Muscle))];
+      this.ids = new Map(list.map((x) => [x.Name, x.ID]));
+      const focuses = ["全身", ...new Set(list.map((x) => x.Muscle))];
       this.setData({
         // 可用器材按分类勾选（器械/杠铃/哑铃…），不按具体机型，否则选项会多到没法选
-        gearOpts: [...new Set(exercises.map((x) => x.Category))].map((v) => ({
+        gearOpts: [...new Set(list.map((x) => x.Category))].map((v) => ({
           v,
           on: false,
         })),

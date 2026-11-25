@@ -1,4 +1,4 @@
-const { request, report } = require("../../api");
+const { request, exercises, report } = require("../../api");
 const { img } = require("../../utils/image");
 
 // 顶部器材筛选的第一项，代表不过滤
@@ -44,7 +44,7 @@ Page({
   },
   async load() {
     try {
-      const [rows, meta] = await Promise.all([request("/exercises"), request("/categories")]);
+      const [rows, meta] = await Promise.all([exercises(), request("/categories")]);
       this.all = rows;
       this.meta = meta;
       this.setData({ cats: [ALL, ...meta.Categories] }, () => {
