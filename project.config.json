@@ -6,10 +6,12 @@
   "setting": {
     "es6": true,
     "minified": true,
-    "useCompilerPlugins": ["typescript"],
+    "useCompilerPlugins": [
+      "typescript"
+    ],
     "postcss": false,
     "compileWorklet": false,
-    "uglifyFileName": false,
+    "uglifyFileName": true,
     "uploadWithSourceMap": true,
     "enhance": false,
     "packNpmManually": false,
