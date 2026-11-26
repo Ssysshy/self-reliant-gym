@@ -35,6 +35,79 @@ button::after {
   font-size: 30rpx;
   font-weight: 500;
 }
+/* 自建动作：动作库里没有，只存在这份计划里 */
+.item-tag {
+  margin-right: 16rpx;
+  padding: 2rpx 10rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 8rpx;
+  color: #999;
+  font-size: 22rpx;
+}
+/* 动作搜索：单输入框，输入即匹配动作库；没有匹配就按文字建自建动作 */
+.search {
+  display: flex;
+  align-items: center;
+  height: 96rpx;
+  padding: 0 24rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 20rpx;
+  background: #fff;
+}
+.search-input {
+  flex: 1;
+  height: 96rpx;
+  font-size: 30rpx;
+  /* 全局 input 带灰底和 16rpx 内边距，这里要还原成描边容器里的裸输入 */
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+.search-ph {
+  color: #b5b5b0;
+  font-size: 26rpx;
+}
+.search-add {
+  padding-left: 24rpx;
+  color: #171717;
+  font-size: 28rpx;
+}
+.search-add.off {
+  color: #c9c9c4;
+}
+.suggest {
+  margin-top: 12rpx;
+  border: 2rpx solid #e4e4e1;
+  border-radius: 20rpx;
+  background: #fff;
+  overflow: hidden;
+}
+.suggest-row {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  /* 固定行高，候选区才能按「5 行」算高度 */
+  height: 88rpx;
+  padding: 0 24rpx;
+}
+.suggest-row + .suggest-row,
+.suggest-row.divider {
+  border-top: 2rpx solid #f2f2ef;
+}
+.suggest-row .grow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.suggest-name {
+  font-size: 28rpx;
+}
+.suggest-meta {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  color: #999;
+  font-size: 24rpx;
+}
 .item-remove {
   color: #a1a19d;
   font-size: 24rpx;

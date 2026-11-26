@@ -1,6 +1,9 @@
 const { request, exercises, report } = require("../../api");
 
 const WEEK = ["一", "二", "三", "四", "五", "六", "日"];
+// 候选行高（rpx），和 wxss 里 .suggest-row 的 height 保持一致；
+// 列表固定按 5.5 行算高度，露出半行提示还能继续滑。
+const ROW_H = 88;
 // 智能生成的草案动辄十几个动作，塞不进 URL，改成本地暂存交接一次
 const DRAFT = "plan:draft";
 
@@ -13,6 +16,12 @@ Page({
     exercises: [],
     items: [],
     days: [],
+    // 动作搜索框：输入即过滤动作库；没命中就按输入文字存成自建动作
+    kw: "",
+    matches: [],
+    canCreate: false,
+    // 候选列表高度：固定 5 行，超过的在列表内滚动（10 条也放得下）
+    suggestHeight: 0,
     // 正在编辑的计划 ID：0 表示新建，非 0 表示改这一条（保存时原地更新）
     planId: 0,
     // 保存中：防止连点重复提交
@@ -63,10 +72,66 @@ Page({
       items: this.data.days.find((d) => d.Weekday === week)?.Items || [],
     });
   },
-  add(e) {
-    const x = this.data.exercises[e.detail.value];
+  // 输入即搜索：前缀命中排前面，其次名字短的；最多取 10 条，列表固定 5.5 行高，其余滑动查看。
+  search(e) {
+    const kw = e.detail.value;
+    const q = kw.trim();
+    const lower = q.toLowerCase();
+    let matches = [];
+    let exact = false;
+    if (q) {
+      for (const x of this.data.exercises) {
+        const name = String(x.Name || "").toLowerCase();
+        if (name === lower) exact = true;
+        if (name.includes(lower)) {
+          matches.push({
+            ID: x.ID,
+            Name: x.Name,
+            meta: [x.Muscle, x.SubMuscle].filter(Boolean).join(" · "),
+            at: name.indexOf(lower),
+          });
+        }
+      }
+      matches.sort((a, b) => a.at - b.at || a.Name.length - b.Name.length);
+      matches = matches.slice(0, 10);
+    }
     this.setData({
-      items: [...this.data.items, { Name: x.Name, Sets: 3, Reps: 10, Rest: 60 }],
+      kw,
+      matches,
+      canCreate: !!q && !exact,
+      // 不足 5 行按实际条数；到第 6 条起固定 5.5 行，半行露出来提示可滑
+      suggestHeight: Math.min(matches.length, 5.5) * ROW_H,
+    });
+  },
+  // 点中候选：按动作库里的那条加，带 ExerciseID
+  pick(e) {
+    const x = this.data.exercises.find(
+      (v) => v.ID === Number(e.currentTarget.dataset.id),
+    );
+    if (!x) return;
+    this.append(x.ID, x.Name);
+  },
+  // 回车或点「添加」：完全同名就挂到动作库，没有同名就按输入文字存成自建动作（ExerciseID=0）
+  addTyped() {
+    const name = this.data.kw.trim();
+    if (!name) return;
+    // 英文动作名大小写不敏感，和上面的搜索口径保持一致
+    const lower = name.toLowerCase();
+    const hit = this.data.exercises.find(
+      (x) => String(x.Name || "").toLowerCase() === lower,
+    );
+    this.append(hit ? hit.ID : 0, hit ? hit.Name : name);
+  },
+  append(id, name) {
+    this.setData({
+      items: [
+        ...this.data.items,
+        { ExerciseID: id, Name: name, Sets: 3, Reps: 10, Rest: 60 },
+      ],
+      kw: "",
+      matches: [],
+      canCreate: false,
+      suggestHeight: 0,
     });
   },
   field(e) {

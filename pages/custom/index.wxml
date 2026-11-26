@@ -33,16 +33,53 @@
       动作
       <text class="section-note">周{{ week }}</text>
     </view>
-    <picker range="{{ exercises }}" range-key="Name" bindchange="add">
-      <view class="card">
-        <view class="grow row-main">添加动作</view>
-        <text class="chev">›</text>
+    <view class="search">
+      <input
+        class="search-input"
+        value="{{ kw }}"
+        placeholder="输入动作名，没有匹配会自动存为自建动作"
+        placeholder-class="search-ph"
+        confirm-type="done"
+        cursor-spacing="24"
+        maxlength="40"
+        bindinput="search"
+        bindconfirm="addTyped"
+      />
+      <text class="search-add {{ kw ? '' : 'off' }}" bindtap="addTyped">添加</text>
+    </view>
+
+    <view wx:if="{{ matches.length || canCreate }}" class="suggest">
+      <scroll-view
+        wx:if="{{ matches.length }}"
+        scroll-y="{{ true }}"
+        class="suggest-scroll"
+        style="height: {{ suggestHeight }}rpx"
+      >
+        <view
+          wx:for="{{ matches }}"
+          wx:key="ID"
+          class="suggest-row"
+          data-id="{{ item.ID }}"
+          bindtap="pick"
+        >
+          <text class="grow suggest-name">{{ item.Name }}</text>
+          <text class="suggest-meta">{{ item.meta }}</text>
+        </view>
+      </scroll-view>
+      <view
+        wx:if="{{ canCreate }}"
+        class="suggest-row create {{ matches.length ? 'divider' : '' }}"
+        bindtap="addTyped"
+      >
+        <text class="grow">创建自建动作「{{ kw }}」</text>
+        <text class="suggest-meta">只存在这份计划</text>
       </view>
-    </picker>
+    </view>
 
     <view wx:for="{{ items }}" wx:key="index" class="item">
       <view class="item-head">
         <text class="grow item-name">{{ item.Name }}</text>
+        <text wx:if="{{ !item.ExerciseID }}" class="item-tag">自建</text>
         <text class="item-remove" data-i="{{ index }}" bindtap="removeItem">移除</text>
       </view>
       <view class="nums">
