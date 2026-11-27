@@ -12,6 +12,7 @@
       <view wx:if="{{ item.SubMuscle }}" class="tag dark">{{ item.SubMuscle }}</view>
       <view class="tag">{{ item.Category }}</view>
       <view class="tag">{{ item.Equipment }}</view>
+      <view wx:if="{{ item.Level }}" class="tag">{{ item.Level }}</view>
     </view>
   </view>
 

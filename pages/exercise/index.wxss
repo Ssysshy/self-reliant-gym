@@ -57,4 +57,5 @@
   color: #333;
   font-size: 29rpx;
   line-height: 1.75;
+  white-space: pre-line;
 }

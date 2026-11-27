@@ -11,50 +11,53 @@
   color: #aaa;
 }
 
-/* 首页右下角的健身搭子：固定 432×576，右下角贴边（不留白边），别跟着页面滚。
-   多留一截底部内边距，最后一张卡片才能滚到搭子上方，不会被挡住。 */
+/* 首页右下角的健身搭子：固定 518×691（原来 432×576 的 1.2 倍，3:4 不变），
+   右下角贴边（不留白边），别跟着页面滚。
+   多留一截底部内边距，最后一张卡片才能滚到搭子上方，不会被挡住（691 + 约 77 的余量）。 */
 .page {
-  padding-bottom: 640rpx;
+  padding-bottom: 768rpx;
 }
 .buddy {
   position: fixed;
   right: 0;
   bottom: 0;
-  width: 432rpx;
-  height: 576rpx;
+  width: 518rpx;
+  height: 691rpx;
   z-index: 3;
 }
 .buddy-img {
   display: block;
-  width: 432rpx;
-  height: 576rpx;
+  width: 518rpx;
+  height: 691rpx;
 }
 
-/* 台词气泡：贴在人物左上方，底边在图片顶上 18rpx。
+/* 台词气泡：贴在人物左上方，底边在图片顶上 22rpx（同样按 1.2 倍放大）。
    白底黑框黑字 + 一层投影，白底压在白页面上才不会糊成一片。
    层级给到最高，压在鼓励弹窗（9）和新手引导（5）之上。 */
 .bubble {
   position: fixed;
-  /* 比图片左边缘（432rpx）再往右 170rpx，靠近人物脑袋又不压到脸 */
-  right: 262rpx;
-  bottom: 594rpx;
+  /* 比图片左边缘（518rpx）再往右 204rpx，靠近人物脑袋又不压到脸 */
+  right: 314rpx;
+  bottom: 713rpx;
   z-index: 9999;
-  /* 再宽就顶到屏幕左边了，长句会折行 */
+  /* 宽度不跟着放大：再宽就顶到屏幕左边了，长句会折行。
+     屏宽 750 - 314 = 436 是上限，留 36rpx 边距，收到 400 */
   max-width: 400rpx;
-  min-width: 140rpx;
-  padding: 18rpx 22rpx;
+  min-width: 168rpx;
+  padding: 22rpx 26rpx;
   background: #fff;
   color: #191919;
-  font-size: 26rpx;
+  font-size: 31rpx;
   line-height: 1.5;
+  /* 描边保持 2rpx：2.4rpx 会落在半像素上，描边发虚，不值得为这点比例去改 */
   border: 2rpx solid #191919;
-  border-radius: 16rpx;
+  border-radius: 19rpx;
   box-sizing: border-box;
   /* 白底压在白页面上容易糊成一片，加一层投影托起来。
      用 drop-shadow 而不是 box-shadow：影子跟「气泡 + 尾巴」的外轮廓走，
      不会在气泡底边压出一条横线穿过尾巴 */
-  -webkit-filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.12));
-  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.12));
+  -webkit-filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
   animation: bubble-in 0.16s ease-out;
 }
 /* 尾巴两层：黑色描边三角在下，白色内三角压上去 2rpx 盖住气泡底边线，
@@ -62,17 +65,17 @@
 .bubble::before {
   content: "";
   position: absolute;
-  right: 26rpx;
+  right: 31rpx;
   top: 100%;
-  border: 12rpx solid transparent;
+  border: 14rpx solid transparent;
   border-top-color: #191919;
 }
 .bubble::after {
   content: "";
   position: absolute;
-  right: 28rpx;
+  right: 33rpx;
   top: calc(100% - 2rpx);
-  border: 10rpx solid transparent;
+  border: 12rpx solid transparent;
   border-top-color: #fff;
 }
 @keyframes bubble-in {

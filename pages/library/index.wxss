@@ -157,10 +157,12 @@
   border-radius: 24rpx;
   background: #fff;
 }
+/* 动作图本身是 384×384 的方图，缩略框也必须是正方形，
+   否则 aspectFit 会在左右留白，看着像图片被压扁/没对齐 */
 .ex-thumb {
   flex: none;
   width: 140rpx;
-  height: 112rpx;
+  height: 140rpx;
   border-radius: 14rpx;
   background: #f6f6f4;
 }
